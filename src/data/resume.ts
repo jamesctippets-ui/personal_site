@@ -53,7 +53,9 @@ export const resume: Resume = {
       organization: 'Fort Mill History Museum',
       end: 'Present',
       highlights: [
-        "Serve as the museum's IT consultant in my free time, supporting its computers, accounts and day-to-day technology needs.",
+        'Provision and configure devices for the Executive Director.',
+        'Provide anytime help by text for staff questions and quick fixes.',
+        'Set up and manage the museum’s printers, and handle data transfers between devices.',
       ],
     },
     {

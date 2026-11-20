@@ -31,11 +31,15 @@ SITE_URL=https://jamesctippets-ui.github.io BASE_PATH=/personal_site npx astro b
 ## Architecture
 
 **Content is data; screens are components; the terminal clones screens.**
-- `src/data/*.ts`: all copy, as typed modules. They are `profile` (including the `consulting` offer), `projects`, `skills`, `references` and `resume`. Content edits should only touch this folder.
+- `src/data/*.ts`: all copy, as typed modules. They are `profile` (including the `consulting` offer), `projects`, `skills`, `homelab`, `spotlight` (museum), `references`, `resume` and `inquiry` (the contact form's services and email template). Content edits should only touch this folder.
 - `src/components/screens/*.astro`: the output of each screen command (About, Projects, Skills, ResumeText, Consulting, Contact, References, Help).
 - `src/pages/index.astro`: renders every screen once as `<section data-screen="id">` inside `#screens`, plus the menu bar, prompt form, F-key bar and halt overlay.
 - `src/scripts/terminal.ts`: the runtime. On load it detaches `#screens` and keeps the sections as templates. Running a command echoes `C:\JAMES>cmd` and appends a clone of that screen (ids stripped) to `#output`, or runs a builtin. Any element with `data-cmd="..."` anywhere on the page runs that command on click. That is how the menu, the F-keys and the in-text links work, so new clickable things just need `data-cmd` (and an `href="#cmd"` for no-JS).
 - `src/scripts/commands.ts`: the DOM-free command table (screen commands, builtins, aliases, the fake `DIR` file list, HELP rows, Tab completions). It is imported both at build time (Help screen) and at runtime. **To add a screen:** create the component, add its id to `SCREEN_COMMANDS`, render it in the `screens` list in `index.astro`, and optionally add a menu entry, a `FILES` entry and a help row.
+
+**Contact form:** `screens/Consulting.astro` holds the inquiry form, and `src/scripts/inquiry.ts` handles submit (delegated on `document`, because the form is cloned). The form fills `inquiry.subjectTemplate`/`bodyTemplate` and POSTs to Web3Forms when `inquiry.web3formsKey` is set. Web3Forms keys are public by design. While the key is empty, the form opens a prefilled `mailto:` instead. Cloned markup must not rely on `id`s, so labels wrap their inputs.
+
+**Easter eggs** live in `easterEgg()` in `terminal.ts`, plus a Konami-code listener. They are deliberately left out of HELP. The `secrets` command reports how many of `EGGS` the visitor has found, so add new ones to that list too.
 
 **Progressive enhancement is load-bearing.** `Base.astro` adds `html.js` in an inline head script, and restores the saved phosphor theme from the same script to avoid a flash. Without JS, `#screens` *is* the page. It is a scrolling sequence of `C:\JAMES>type x` blocks, menu links are `#id` anchors, and the prompt and F-key bar are hidden. Terminal-mode layout (fixed-height flex column with a scrolling `#output`) is scoped under `html.js`. Keep it that way so crawlers and no-JS visitors see all content.
 

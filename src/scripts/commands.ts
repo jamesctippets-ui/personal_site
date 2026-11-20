@@ -9,6 +9,8 @@ export const SCREEN_COMMANDS = [
   'about',
   'projects',
   'skills',
+  'homelab',
+  'museum',
   'resume',
   'contact',
   ...(profile.consulting.open ? ['consulting'] : []),
@@ -58,6 +60,12 @@ export const ALIASES: Record<string, string> = {
   mail: 'email',
   theme: 'color',
   refs: 'references',
+  lab: 'homelab',
+  'home-lab': 'homelab',
+  spotlight: 'museum',
+  volunteer: 'museum',
+  inquiry: 'consulting',
+  form: 'consulting',
 };
 
 /** Fake files shown by DIR. Opening one runs its command. */
@@ -71,6 +79,8 @@ export const FILES: FileEntry[] = [
   { name: 'ABOUT.TXT', command: 'about' },
   { name: 'PROJECTS', dir: true, command: 'projects' },
   { name: 'SKILLS.TXT', command: 'skills' },
+  { name: 'HOMELAB', dir: true, command: 'homelab' },
+  { name: 'MUSEUM.TXT', command: 'museum' },
   { name: 'RESUME.DOC', command: 'resume' },
   ...(references.length ? [{ name: 'REFS.TXT', command: 'references' }] : []),
   ...(profile.consulting.open ? [{ name: 'HIRE_ME.TXT', command: 'consulting' }] : []),
@@ -90,12 +100,14 @@ export function helpRows(): HelpRow[] {
     { name: 'ABOUT', description: 'Who I am and what I do', run: 'about' },
     { name: 'PROJECTS', description: "Things I've built", run: 'projects' },
     { name: 'SKILLS', description: 'Tools and technologies', run: 'skills' },
+    { name: 'HOMELAB', description: 'MCP server, UniFi network, repair bench', run: 'homelab' },
+    { name: 'MUSEUM', description: 'Spotlight: IT for a history museum', run: 'museum' },
     { name: 'RESUME', description: 'Work history (printable version too)', run: 'resume' },
     ...(references.length
       ? [{ name: 'REFERENCES', description: 'What people say', run: 'references' }]
       : []),
     ...(profile.consulting.open
-      ? [{ name: 'CONSULTING', description: 'Hire me for IT consulting', run: 'consulting' }]
+      ? [{ name: 'CONSULTING', description: 'Hire me for IT consulting (inquiry form)', run: 'consulting' }]
       : []),
     { name: 'CONTACT', description: 'Email and links', run: 'contact' },
     { name: 'DIR', description: 'List files', run: 'dir' },

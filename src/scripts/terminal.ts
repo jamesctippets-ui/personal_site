@@ -103,9 +103,174 @@ function resolveFile(arg: string): string | undefined {
   return file?.command;
 }
 
+// ---------- Easter eggs ----------
+// Not listed in HELP on purpose. Each returns true when it handled the input.
+
+const EGGS = [
+  'hire james',
+  'sudo',
+  'ticket',
+  'coffee',
+  'ping',
+  'fortune',
+  'xyzzy',
+  'destroy',
+  'matrix',
+  'hello',
+  '42',
+  'konami',
+] as const;
+const found = new Set<string>();
+
+const FORTUNES = [
+  'Have you tried turning it off and on again? (It works more often than anyone admits.)',
+  'Document the fix. Future you is also a user.',
+  'It is always DNS. Except when it is the cable.',
+  'The best ticket is the one that never gets opened because the root cause was fixed.',
+  'Patch Tuesday waits for no one.',
+  'Label your cables. Thank yourself later.',
+  'There is no cloud. It is just someone else’s computer.',
+  'A good backup is one you have restored at least once.',
+];
+
+function matrixRain(seconds = 3) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    line('Wake up... (animation skipped: reduced motion is on)', 'bright');
+    return;
+  }
+  const canvas = document.createElement('canvas');
+  canvas.className = 'rain';
+  canvas.width = Math.min(output.clientWidth - 16, 900);
+  canvas.height = 220;
+  output.append(canvas);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const color = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() || '#3dff6e';
+  const size = 16;
+  const cols = Math.floor(canvas.width / size);
+  const drops = Array.from({ length: cols }, () => Math.random() * -20);
+  const glyphs = '01JAMESOS<>/\\{}[]#$%&*+=';
+  const started = performance.now();
+  const frame = (now: number) => {
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = color;
+    ctx.font = `${size}px monospace`;
+    drops.forEach((y, i) => {
+      ctx.fillText(glyphs[Math.floor(Math.random() * glyphs.length)], i * size, y * size);
+      drops[i] = y * size > canvas.height && Math.random() > 0.95 ? 0 : y + 1;
+    });
+    if (now - started < seconds * 1000) requestAnimationFrame(frame);
+    else line('Wake up. The resume is real.', 'bright');
+  };
+  requestAnimationFrame(frame);
+}
+
+function egg(id: (typeof EGGS)[number]) {
+  found.add(id);
+}
+
+function easterEgg(raw: string): boolean {
+  const s = raw.trim().toLowerCase().replace(/\s+/g, ' ');
+  if (s === 'hire james' || s === 'hire me' || s === 'hire jamesos') {
+    egg('hire james');
+    line('Excellent decision. Pulling up the paperwork...', 'bright');
+    printScreen('consulting');
+    return true;
+  }
+  if (s.startsWith('sudo')) {
+    egg('sudo');
+    const n = Math.floor(10000 + Math.random() * 89999);
+    line(`Nice try. Elevation request denied and escalated to the Service Desk as INC00${n}.`);
+    return true;
+  }
+  if (s === 'ticket' || s === 'new ticket' || s === 'help desk' || s === 'helpdesk') {
+    egg('ticket');
+    const n = Math.floor(100000 + Math.random() * 899999);
+    line(`Ticket INC0${n} created. Priority: P4. Assigned to: James.`);
+    line('First troubleshooting step: have you tried turning it off and on again?', 'dim');
+    return true;
+  }
+  if (s === 'coffee' || s === 'make coffee' || s === 'brew coffee') {
+    egg('coffee');
+    const pre = document.createElement('pre');
+    pre.className = 'art';
+    pre.textContent = '    ( (\n     ) )\n  ........\n  |      |]\n  \\      /\n   `----\'';
+    output.append(pre);
+    line('Brewing... done. Ticket throughput +10%.');
+    return true;
+  }
+  if (s === 'ping' || s.startsWith('ping ')) {
+    egg('ping');
+    const host = s.split(' ')[1] || 'james';
+    line(`Pinging ${host} with 32 bytes of data:`);
+    for (let i = 0; i < 4; i++) line(`Reply from ${host}: bytes=32 time<1ms TTL=64`);
+    line('Average response time: faster than your SLA.', 'dim');
+    return true;
+  }
+  if (s === 'fortune' || s === 'tip') {
+    egg('fortune');
+    line(FORTUNES[Math.floor(Math.random() * FORTUNES.length)]);
+    return true;
+  }
+  if (s === 'xyzzy' || s === 'plugh') {
+    egg('xyzzy');
+    line('Nothing happens.');
+    return true;
+  }
+  if (/^(rm -rf|format c|deltree|del \*|drop table)/.test(s)) {
+    egg('destroy');
+    line('Change request rejected by the Change Advisory Board. Please submit a rollback plan.');
+    return true;
+  }
+  if (s === 'matrix' || s === 'the matrix') {
+    egg('matrix');
+    matrixRain();
+    return true;
+  }
+  if (s === 'hello' || s === 'hi' || s === 'hey') {
+    egg('hello');
+    line('Hello! Thanks for stopping by. Type HELP to look around.');
+    return true;
+  }
+  if (s === '42') {
+    egg('42');
+    line('Yes, that is the answer. Now what was the question?');
+    return true;
+  }
+  if (s === 'secrets' || s === 'secret' || s === 'eggs' || s === 'easter eggs') {
+    line(`There are ${EGGS.length} secrets hidden in JamesOS. You have found ${found.size}.`);
+    line('Hint: try things you would type on a help desk, a coffee break, or an old adventure game.', 'dim');
+    return true;
+  }
+  return false;
+}
+
+// Konami code anywhere on the page.
+const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+let konamiPos = 0;
+document.addEventListener('keydown', (e) => {
+  konamiPos = e.key === KONAMI[konamiPos] ? konamiPos + 1 : e.key === KONAMI[0] ? 1 : 0;
+  if (konamiPos === KONAMI.length) {
+    konamiPos = 0;
+    egg('konami');
+    line('Cheat code accepted. +30 lives. Unlocking turbo phosphor...', 'bright');
+    let i = 0;
+    const t = setInterval(() => {
+      setTheme(THEMES[i++ % THEMES.length]);
+      if (i > 6) {
+        clearInterval(t);
+        setTheme('green');
+      }
+    }, 180);
+    output.scrollTop = output.scrollHeight;
+  }
+});
+
 function exec(raw: string): void {
   const trimmed = raw.trim();
   if (!trimmed) return;
+  if (easterEgg(trimmed)) return;
   const [head, ...rest] = trimmed.split(/\s+/);
   const arg = rest.join(' ');
   let cmd = head.toLowerCase();
@@ -195,6 +360,11 @@ function exec(raw: string): void {
     }
     case 'exit':
       shutdown();
+      return;
+    case 'reboot':
+    case 'restart':
+      output.replaceChildren();
+      boot(true);
       return;
     default:
       line(fragment(`Unknown command: ${head}. Type `, cmdLink('help', 'HELP'), ' for a list of commands.'));

@@ -1,0 +1,32 @@
+---
+import { homelab } from '@/data/homelab';
+---
+
+<p class="dim">Things I run and fix outside of work.</p>
+<ul>
+  {
+    homelab.map((item) => (
+      <li class="frame">
+        <h2 class="frame-title">{item.name.toUpperCase()}</h2>
+        <p>{item.summary}</p>
+        <ul class="details">
+          {item.details.map((d) => (
+            <li>
+              <span class="dim" aria-hidden="true">
+                &gt;{' '}
+              </span>
+              {d}
+            </li>
+          ))}
+        </ul>
+        <p class="dim">Tags: {item.tags.join(' · ')}</p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .details {
+    margin: 0.4em 0;
+  }
+</style>

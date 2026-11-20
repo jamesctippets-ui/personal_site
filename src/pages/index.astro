@@ -8,6 +8,8 @@ import ResumeText from '@/components/screens/ResumeText.astro';
 import Consulting from '@/components/screens/Consulting.astro';
 import Contact from '@/components/screens/Contact.astro';
 import References from '@/components/screens/References.astro';
+import Homelab from '@/components/screens/Homelab.astro';
+import Museum from '@/components/screens/Museum.astro';
 import { profile } from '@/data/profile';
 import { references } from '@/data/references';
 
@@ -16,6 +18,8 @@ const menu = [
   { label: 'About', cmd: 'about' },
   { label: 'Projects', cmd: 'projects' },
   { label: 'Skills', cmd: 'skills' },
+  { label: 'Lab', cmd: 'homelab' },
+  { label: 'Museum', cmd: 'museum' },
   { label: 'Resume', cmd: 'resume' },
   ...(profile.consulting.open ? [{ label: 'Hire me', cmd: 'consulting' }] : []),
   { label: 'Contact', cmd: 'contact' },
@@ -40,6 +44,8 @@ const screens = [
   { id: 'about', file: 'about.txt' },
   { id: 'projects', file: 'projects' },
   { id: 'skills', file: 'skills.txt' },
+  { id: 'homelab', file: 'homelab' },
+  { id: 'museum', file: 'museum.txt' },
   { id: 'resume', file: 'resume.doc' },
   ...(profile.consulting.open ? [{ id: 'consulting', file: 'hire_me.txt' }] : []),
   ...(references.length ? [{ id: 'references', file: 'refs.txt' }] : []),
@@ -80,6 +86,8 @@ const screens = [
               {s.id === 'about' && <About />}
               {s.id === 'projects' && <Projects />}
               {s.id === 'skills' && <Skills />}
+              {s.id === 'homelab' && <Homelab />}
+              {s.id === 'museum' && <Museum />}
               {s.id === 'resume' && <ResumeText />}
               {s.id === 'consulting' && <Consulting />}
               {s.id === 'references' && <References />}
@@ -131,6 +139,7 @@ const screens = [
 
 <script>
   import '@/scripts/terminal';
+  import '@/scripts/inquiry';
 </script>
 
 <style>
@@ -206,6 +215,16 @@ const screens = [
   }
   .output :global(.dir .cmd-link) {
     width: 9em;
+  }
+  .output :global(.art) {
+    margin: 0.3em 0;
+    font: inherit;
+    line-height: 1.1;
+  }
+  .output :global(.rain) {
+    display: block;
+    margin: 0.4em 0;
+    max-width: 100%;
   }
   .output :global(.block) {
     max-width: 62em;
