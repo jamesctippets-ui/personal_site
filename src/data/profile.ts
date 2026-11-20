@@ -42,7 +42,10 @@ export const profile: Profile = {
     "I'm open to IT consulting inquiries, with a focus on hardware and repair, Microsoft 365 management, and AI consulting.",
   ],
   email: 'James.C.Tippets@gmail.com',
-  links: [{ label: 'GitHub', href: 'https://github.com/jamesctippets-ui' }],
+  links: [
+    { label: 'GitHub', href: 'https://github.com/jamesctippets-ui' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/james-tippets-5075442bb/' },
+  ],
   resumePdf: '',
   consulting: {
     open: true,
