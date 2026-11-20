@@ -250,6 +250,7 @@ function easterEgg(raw: string): boolean {
 const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let konamiPos = 0;
 document.addEventListener('keydown', (e) => {
+  if (inOtherField(e.target)) return;
   konamiPos = e.key === KONAMI[konamiPos] ? konamiPos + 1 : e.key === KONAMI[0] ? 1 : 0;
   if (konamiPos === KONAMI.length) {
     konamiPos = 0;
@@ -502,8 +503,20 @@ const FKEYS: Record<string, string> = {
   F7: 'contact',
 };
 
+/**
+ * True when the event target is a form control other than the command prompt
+ * (e.g. the consulting inquiry form). Terminal shortcuts and the
+ * "typing goes to the prompt" behavior must leave those alone.
+ */
+function inOtherField(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  if (!el || el === input || !el.closest) return false;
+  return Boolean(el.closest('input, textarea, select, label, [contenteditable], form[data-inquiry]'));
+}
+
 document.addEventListener('keydown', (e) => {
   if (!halt.hidden) return;
+  if (inOtherField(e.target)) return;
   if (booting && !e.ctrlKey && !e.metaKey && !e.altKey) skipBoot?.();
   const fk = FKEYS[e.key];
   if (fk) {
@@ -517,11 +530,8 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   // Typing anywhere goes to the prompt, like a real terminal.
-  const t = e.target as HTMLElement;
   const typing = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
-  if (typing && t !== input && !t.closest('input, textarea, select, [contenteditable]')) {
-    input.focus();
-  }
+  if (typing && e.target !== input) input.focus();
 });
 
 // Clicks on any [data-cmd] (menu, F-key bar, links in output) run the command.
@@ -538,7 +548,7 @@ document.addEventListener('click', (e) => {
 // where it would pop up the keyboard every time you scroll).
 output.addEventListener('pointerup', (e) => {
   if (e.pointerType !== 'mouse') return;
-  if ((e.target as HTMLElement).closest('a, button')) return;
+  if ((e.target as HTMLElement).closest('a, button') || inOtherField(e.target)) return;
   if (window.getSelection()?.toString()) return;
   input.focus({ preventScroll: true });
 });
