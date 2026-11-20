@@ -12,6 +12,7 @@ import Homelab from '@/components/screens/Homelab.astro';
 import Museum from '@/components/screens/Museum.astro';
 import { profile } from '@/data/profile';
 import { references } from '@/data/references';
+import { withBase } from '@/utils';
 
 // Menu bar entries. `cmd` must be a screen command from src/scripts/commands.ts.
 const menu = [
@@ -34,6 +35,7 @@ const fkeys = [
   { key: 'F4', label: 'Skills', cmd: 'skills' },
   { key: 'F6', label: 'Resume', cmd: 'resume' },
   { key: 'F7', label: 'Contact', cmd: 'contact' },
+  { key: '', label: 'Play', cmd: 'play' },
   { key: '', label: 'Color', cmd: 'color' },
   { key: '', label: 'Exit', cmd: 'exit' },
 ];
@@ -71,6 +73,7 @@ const screens = [
           }
         </ul>
       </nav>
+      <a class="modern-link" href={withBase('modern/')} title="A regular, easy-to-navigate version of this site">Modern site</a>
       <span id="clock" class="clock dim" aria-hidden="true"></span>
     </header>
 
@@ -185,6 +188,14 @@ const screens = [
     color: var(--fg);
     text-decoration: none;
     padding: 0 0.2em;
+  }
+  .menubar .modern-link {
+    border: 1px solid var(--fg);
+    padding: 0 0.4em;
+    white-space: nowrap;
+  }
+  .menubar .modern-link::first-letter {
+    text-decoration: none;
   }
   .menubar a::first-letter {
     text-decoration: underline;
