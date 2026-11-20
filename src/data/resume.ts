@@ -41,16 +41,19 @@ export const resume: Resume = {
       title: 'Service Desk Analyst II',
       organization: 'Valley Health',
       location: 'Winchester, VA',
-      start: '2026',
+      start: 'Sep 2026',
       end: 'Present',
-      highlights: ['Provide service desk support for clinical and business staff across a regional health system.'],
+      highlights: [
+        'Triage incoming tickets and calls for the hospital\'s Information Services department, resolving issues at first contact where possible.',
+        'Route escalations to the right IS teams with clear documentation so clinical and business staff get back to work quickly.',
+      ],
     },
     {
       title: 'IT Support Consultant',
       organization: 'Miles IT',
       location: 'Remote',
       start: 'Jan 2025',
-      end: '2026',
+      end: 'Sep 2026',
       highlights: [
         'Resolved 2,500+ tickets for enterprise healthcare clients (500+ users) at a 10–15 ticket daily pace, earning 250+ positive feedback ratings for service quality.',
         'Administered Microsoft 365 (Exchange Online, Entra ID, Intune, SharePoint, Teams, Defender) across multiple medical organizations under strict HIPAA compliance.',
@@ -93,7 +96,13 @@ export const resume: Resume = {
       ],
     },
   ],
-  education: [],
+  education: [
+    {
+      credential: 'Coursework toward A.S., University Studies',
+      institution: 'Utah Valley University',
+      year: '2019',
+    },
+  ],
   certifications: [
     { name: 'CompTIA A+' },
     { name: 'CompTIA Network+' },

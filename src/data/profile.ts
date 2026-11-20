@@ -34,7 +34,7 @@ export const profile: Profile = {
     "I'm a Service Desk Analyst II at Valley Health in Winchester, Virginia. Before that I resolved 2,500+ tickets for healthcare clients at Miles IT, administering Microsoft 365, Entra ID, Intune and FortiGate firewalls in HIPAA-regulated environments.",
     "I care about fixing the root cause instead of applying a band-aid, and about explaining technical problems clearly. Outside the service desk I build things with Claude: a certification study app, a personal AI assistant, and a couple of games.",
   ],
-  email: '',
+  email: 'James.C.Tippets@gmail.com',
   links: [{ label: 'GitHub', href: 'https://github.com/jamesctippets-ui' }],
   resumePdf: '',
 };
