@@ -74,9 +74,10 @@ import { skills } from '@/data/skills';
           {resume.certifications.map((c) => (
             <li class="entry-head">
               <span>
-                {c.url ? <a href={c.url}>{c.name}</a> : c.name}, <span class="org">{c.issuer}</span>
+                {c.url ? <a href={c.url}>{c.name}</a> : c.name}
+                {c.issuer && <span class="org">, {c.issuer}</span>}
               </span>
-              <span class="dates">{c.year}</span>
+              {c.year && <span class="dates">{c.year}</span>}
             </li>
           ))}
         </ul>
@@ -84,22 +85,26 @@ import { skills } from '@/data/skills';
     )
   }
 
-  <section>
-    <h2>Education</h2>
-    {
-      resume.education.map((e) => (
-        <div class="entry">
-          <div class="entry-head">
-            <h3>
-              {e.credential}, <span class="org">{e.institution}</span>
-            </h3>
-            <span class="dates">{e.year}</span>
-          </div>
-          {e.details && <p class="meta">{e.details}</p>}
-        </div>
-      ))
-    }
-  </section>
+  {
+    resume.education.length > 0 && (
+      <section>
+        <h2>Education</h2>
+        {
+          resume.education.map((e) => (
+            <div class="entry">
+              <div class="entry-head">
+                <h3>
+                  {e.credential}, <span class="org">{e.institution}</span>
+                </h3>
+                <span class="dates">{e.year}</span>
+              </div>
+              {e.details && <p class="meta">{e.details}</p>}
+            </div>
+          ))
+        }
+      </section>
+    )
+  }
 </article>
 
 <style>

@@ -25,19 +25,16 @@ export interface Profile {
 }
 
 export const profile: Profile = {
-  name: 'James Tippets', // TODO: confirm how you want your name shown
-  title: 'Your Professional Title', // TODO
-  location: 'City, State', // TODO
+  name: 'James Tippets',
+  title: 'Service Desk Analyst II',
+  location: 'Winchester, Virginia',
   tagline:
-    'TODO: A one-line summary of what you do and the kind of work you are looking for.',
+    'Healthcare IT support specialist working across Microsoft 365, endpoint security and networking, and building software with AI on the side.',
   about: [
-    'TODO: A short paragraph about your background and what you focus on.',
-    'TODO: A second paragraph about what you are working on now, or what you enjoy outside of work.',
+    "I'm a Service Desk Analyst II at Valley Health in Winchester, Virginia. Before that I resolved 2,500+ tickets for healthcare clients at Miles IT, administering Microsoft 365, Entra ID, Intune and FortiGate firewalls in HIPAA-regulated environments.",
+    "I care about fixing the root cause instead of applying a band-aid, and about explaining technical problems clearly. Outside the service desk I build things with Claude: a certification study app, a personal AI assistant, and a couple of games.",
   ],
-  email: '', // TODO: add a public contact email if you want one shown
-  links: [
-    { label: 'GitHub', href: 'https://github.com/jamesctippets-ui' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/' }, // TODO: your profile URL
-  ],
+  email: '',
+  links: [{ label: 'GitHub', href: 'https://github.com/jamesctippets-ui' }],
   resumePdf: '',
 };

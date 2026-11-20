@@ -21,8 +21,8 @@ export interface Education {
 
 export interface Certification {
   name: string;
-  issuer: string;
-  year: string;
+  issuer?: string;
+  year?: string;
   url?: string;
 }
 
@@ -34,35 +34,68 @@ export interface Resume {
 }
 
 export const resume: Resume = {
-  summary: 'TODO: Three or four lines summarizing your experience and strengths.',
+  summary:
+    'IT professional with hands-on expertise in Microsoft 365 administration, endpoint security and enterprise firewall management. Experienced supporting healthcare organizations in HIPAA-compliant environments, with a focus on permanent solutions over temporary fixes. Recognized for service quality with 250+ positive feedback ratings across 2,500+ resolved tickets, and comfortable contributing to infrastructure migrations and explaining technical issues clearly to end users and stakeholders.',
   experience: [
     {
-      title: 'Job Title', // TODO
-      organization: 'Company',
-      location: 'City, State',
-      start: 'Month Year',
+      title: 'Service Desk Analyst II',
+      organization: 'Valley Health',
+      location: 'Winchester, VA',
+      start: '2026',
       end: 'Present',
+      highlights: ['Provide service desk support for clinical and business staff across a regional health system.'],
+    },
+    {
+      title: 'IT Support Consultant',
+      organization: 'Miles IT',
+      location: 'Remote',
+      start: 'Jan 2025',
+      end: '2026',
       highlights: [
-        'TODO: An accomplishment with a measurable result.',
-        'TODO: Another accomplishment.',
+        'Resolved 2,500+ tickets for enterprise healthcare clients (500+ users) at a 10–15 ticket daily pace, earning 250+ positive feedback ratings for service quality.',
+        'Administered Microsoft 365 (Exchange Online, Entra ID, Intune, SharePoint, Teams, Defender) across multiple medical organizations under strict HIPAA compliance.',
+        'Used PowerShell to manage mailbox permissions, calendar access and bulk M365 configuration changes, reducing manual admin work on recurring tasks.',
+        'Configured and troubleshot FortiGate firewalls, including VPN tunnels, client- and firewall-level policies, and secure provisioning for remote healthcare staff.',
+        'Managed the endpoint security stack (CrowdStrike EDR, BitLocker, Intune MDM), resolving authentication failures, policy conflicts and compliance gaps.',
+        'Supported an AD-to-Entra ID user migration and a SharePoint data migration, verifying identity and file integrity and resolving post-migration access issues.',
+        'Led device decommissioning for a client shutdown: secure data transfers, full wipes and documented asset disposition per compliance requirements.',
+        'Deployed Group Policy for browser defaults, security baselines and software enforcement; used Datto RMM and ScreenConnect for monitoring and patching.',
+        'Wrote SOPs and troubleshooting guides, and onboarded and mentored new technicians and interns.',
       ],
     },
     {
-      title: 'Previous Job Title', // TODO
-      organization: 'Company',
-      start: 'Month Year',
-      end: 'Month Year',
-      highlights: ['TODO: What you delivered.'],
+      title: 'Project Technical Support',
+      organization: 'Maverik',
+      start: 'Dec 2023',
+      end: 'Dec 2024',
+      highlights: [
+        'Delivered remote support for 400+ retail locations via ServiceNow and led technical execution of the Kum & Go rebranding rollout across distributed sites.',
+        'Administered MySQL databases across all locations and managed back-office systems, POS terminals and fuel dispensing equipment.',
+      ],
     },
-  ],
-  education: [
     {
-      credential: 'Degree or Program', // TODO
-      institution: 'School',
-      year: 'Year',
+      title: 'Desktop Support Technician',
+      organization: 'Intermountain Healthcare',
+      start: 'Aug 2023',
+      end: 'Dec 2023',
+      highlights: [
+        'Provided on-site support for hospital staff and assisted with data center hardware maintenance, including PSU blade installation and preventive upkeep.',
+        'Conducted inventory audits and enforced HIPAA compliance standards across critical healthcare IT infrastructure.',
+      ],
+    },
+    {
+      title: 'Lead Electronics / IT Technician',
+      organization: 'Fixit Mobile Bad Apple',
+      start: 'Aug 2021',
+      end: 'Aug 2023',
+      highlights: [
+        'Supervised hardware diagnostics, mobile device repair and software troubleshooting, managing team workflow and client communication in a high-volume repair shop.',
+      ],
     },
   ],
+  education: [],
   certifications: [
-    // { name: 'Certification', issuer: 'Issuer', year: '2026', url: 'https://...' },
+    { name: 'CompTIA A+' },
+    { name: 'CompTIA Network+' },
   ],
 };
