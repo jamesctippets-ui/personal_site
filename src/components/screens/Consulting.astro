@@ -38,15 +38,15 @@ const live = Boolean(inquiry.web3formsKey);
     {live && <input type="hidden" name="access_key" value={inquiry.web3formsKey} />}
     <label class="row">
       <span>NAME......</span>
-      <input name="name" required autocomplete="name" />
+      <input name="name" required maxlength="100" autocomplete="name" />
     </label>
     <label class="row">
       <span>EMAIL.....</span>
-      <input name="email" type="email" required autocomplete="email" />
+      <input name="email" type="email" required maxlength="200" autocomplete="email" />
     </label>
     <label class="row">
       <span>ORG.......</span>
-      <input name="organization" autocomplete="organization" placeholder="optional" />
+      <input name="organization" maxlength="150" autocomplete="organization" placeholder="optional" />
     </label>
     <label class="row">
       <span>SERVICE...</span>
@@ -56,11 +56,11 @@ const live = Boolean(inquiry.web3formsKey);
     </label>
     <label class="row">
       <span>TIMELINE..</span>
-      <input name="timeline" placeholder="e.g. this week, next month" />
+      <input name="timeline" maxlength="100" placeholder="e.g. this week, next month" />
     </label>
     <label class="row stacked">
       <span>MESSAGE...</span>
-      <textarea name="message" rows="5" required placeholder="What do you need help with?"></textarea>
+      <textarea name="message" rows="5" required maxlength="5000" placeholder="What do you need help with?"></textarea>
     </label>
     <!-- Spam trap: humans never see or fill this. -->
     <input type="checkbox" name="botcheck" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true" />

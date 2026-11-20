@@ -60,6 +60,8 @@ Data files feed several places, so check all of them when changing a shape:
 
 The `@/*` import alias maps to `src/*`. `astro.config.mjs` deliberately has no `// @ts-check`, because `astro check` would then require `@types/node` for `process.env`.
 
+**Security / CSP.** `astro.config.mjs` turns on Astro's `security.csp`, which emits a CSP `<meta>` tag on every page. It hashes Astro's own inline scripts and styles, and otherwise allows only `'self'`, Google Fonts and `api.web3forms.com`. Any new third-party script, font, image host or form endpoint must be added there, or the browser will block it. Don't use inline `style="..."` attributes or `on*=` handlers in markup (use classes and `addEventListener`), and never write user input with `innerHTML`; the terminal uses `textContent` throughout. GitHub Pages can't send response headers, so `frame-ancestors` and HSTS aren't available. Dependabot (`.github/dependabot.yml`) opens weekly update PRs.
+
 ## Deployment
 
 `.github/workflows/deploy.yml` builds on every push to `main`, every PR, and manual dispatch. Only non-PR runs upload and deploy. GitHub Pages must have **Source: GitHub Actions**. If it's left on "Deploy from a branch", a legacy `pages build and deployment` run also fires on each push and fails, which is noise but not ours. If a custom domain is added, add `public/CNAME`; `configure-pages` will then report base path `/`.
