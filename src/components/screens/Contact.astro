@@ -1,0 +1,51 @@
+---
+import { profile } from '@/data/profile';
+---
+
+<section class="frame">
+  <h2 class="frame-title">CONTACT.TXT</h2>
+  <dl>
+    {
+      profile.email && (
+        <div class="row">
+          <dt>EMAIL</dt>
+          <dd>
+            <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          </dd>
+        </div>
+      )
+    }
+    {
+      profile.links.map((link) => (
+        <div class="row">
+          <dt>{link.label.toUpperCase()}</dt>
+          <dd>
+            <a href={link.href} target="_blank" rel="me noopener">
+              {link.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+            </a>
+          </dd>
+        </div>
+      ))
+    }
+    <div class="row">
+      <dt>LOCATION</dt>
+      <dd>{profile.location}</dd>
+    </div>
+  </dl>
+</section>
+
+<style>
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+  }
+  dt {
+    width: 7em;
+    color: var(--dim);
+  }
+  dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+</style>

@@ -1,36 +1,46 @@
 /*
- * Retro desktop theme. Original styling in the spirit of late-90s desktop
- * operating systems: beveled grey chrome, a teal desktop, navy title bars.
- * Bevels are built from the four --3d-* tones; use the .raised / .sunken
- * utilities (or the same box-shadows) rather than hand-rolling borders.
+ * Text-mode terminal theme: an original take on early-PC command-line
+ * screens. One phosphor color (--fg) on a near-black tube (--bg), with
+ * --dim and --bright variants. `data-theme` on <html> swaps the phosphor
+ * (green / amber / white), set by the COLOR command and remembered per visitor.
  */
 :root {
-  --desktop: #0f7b7b;
-  --face: #c3c3c3;
-  --face-light: #dfdfdf;
-  --3d-hi: #ffffff;
-  --3d-light: #dfdfdf;
-  --3d-shadow: #808080;
-  --3d-dark: #0a0a0a;
-  --text: #0a0a0a;
-  --muted: #4a4a4a;
-  --field: #ffffff;
-  --select: #0b2a8a;
-  --select-text: #ffffff;
-  --title-a: #0b2a8a;
-  --title-b: #2f7fcf;
-  --title-inactive-a: #7b7b7b;
-  --title-inactive-b: #b5b5b5;
-  --link: #0b2a8a;
-  --taskbar-h: 2.5rem;
-  --font: Tahoma, Verdana, 'Segoe UI', 'DejaVu Sans', system-ui, sans-serif;
-  --raised: inset -1px -1px var(--3d-dark), inset 1px 1px var(--3d-hi),
-    inset -2px -2px var(--3d-shadow), inset 2px 2px var(--3d-light);
-  --pressed: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-dark),
-    inset -2px -2px var(--3d-light), inset 2px 2px var(--3d-shadow);
-  --sunken: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow),
-    inset -2px -2px var(--3d-light), inset 2px 2px var(--3d-dark);
-  color-scheme: light;
+  --bg: #050a05;
+  --fg: #3dff6e;
+  --dim: #1f9c43;
+  --bright: #c8ffd6;
+  --sel-bg: #3dff6e;
+  --sel-fg: #050a05;
+  --glow: rgba(61, 255, 110, 0.35);
+  --font: 'VT323', 'Cascadia Mono', 'Consolas', 'Lucida Console', 'DejaVu Sans Mono', monospace;
+  --size: 21px;
+  color-scheme: dark;
+}
+
+:root[data-theme='amber'] {
+  --bg: #0c0700;
+  --fg: #ffb12e;
+  --dim: #a8701a;
+  --bright: #ffe2ad;
+  --sel-bg: #ffb12e;
+  --sel-fg: #0c0700;
+  --glow: rgba(255, 177, 46, 0.35);
+}
+
+:root[data-theme='white'] {
+  --bg: #0a0b0d;
+  --fg: #e4e8ee;
+  --dim: #8e949c;
+  --bright: #ffffff;
+  --sel-bg: #e4e8ee;
+  --sel-fg: #0a0b0d;
+  --glow: rgba(228, 232, 238, 0.25);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --size: 19px;
+  }
 }
 
 *,
@@ -46,99 +56,106 @@ body {
 }
 
 body {
-  background: var(--desktop);
-  color: var(--text);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font);
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: var(--size);
+  line-height: 1.25;
+  text-shadow: 0 0 4px var(--glow);
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  color: var(--link);
+::selection {
+  background: var(--sel-bg);
+  color: var(--sel-fg);
+  text-shadow: none;
 }
 
-:focus-visible {
-  outline: 1px dotted var(--text);
-  outline-offset: 2px;
+a,
+.cmd-link {
+  color: var(--bright);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+}
+
+a:hover,
+.cmd-link:hover,
+a:focus-visible,
+.cmd-link:focus-visible {
+  background: var(--sel-bg);
+  color: var(--sel-fg);
+  text-shadow: none;
+  text-decoration: none;
+  outline: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
 }
 
 h1,
 h2,
 h3,
-h4 {
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
   margin: 0;
-  line-height: 1.25;
 }
 
-p {
-  margin: 0 0 0.75em;
+h1,
+h2,
+h3 {
+  font-size: inherit;
+  font-weight: inherit;
 }
 
-img,
-svg {
-  display: block;
+ul {
+  padding: 0;
+  list-style: none;
 }
 
-.raised {
-  background: var(--face);
-  box-shadow: var(--raised);
+.dim {
+  color: var(--dim);
 }
 
-.sunken {
-  background: var(--field);
-  box-shadow: var(--sunken);
+.bright {
+  color: var(--bright);
 }
 
-/* Push button */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  min-width: 5.5rem;
-  min-height: 1.85rem;
-  padding: 0.2rem 0.9rem;
+/* Inverse-video label, the text-mode way to highlight something */
+.inv {
+  background: var(--fg);
+  color: var(--bg);
+  text-shadow: none;
+  padding: 0 0.35em;
+}
+
+/* Text-mode "window": a double-line frame with a title cut into the top edge */
+.frame {
+  position: relative;
+  border: 3px double var(--fg);
+  padding: 0.9em 1em 0.7em;
+  margin: 0.9em 0 0.6em;
+}
+
+.frame > .frame-title {
+  position: absolute;
+  top: -0.7em;
+  left: 0.8em;
+  padding: 0 0.4em;
+  background: var(--bg);
+  color: var(--bright);
+}
+
+.rule {
   border: 0;
-  background: var(--face);
-  box-shadow: var(--raised);
-  color: var(--text);
-  font: inherit;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.btn:active,
-.btn[aria-pressed='true'] {
-  box-shadow: var(--pressed);
-  padding: 0.25rem 0.85rem 0.15rem 0.95rem;
-}
-
-.btn:focus-visible {
-  outline-offset: -5px;
-}
-
-/* Group box */
-.groupbox {
-  border: 0;
-  margin: 0 0 1rem;
-  padding: 0.9rem 0.8rem 0.7rem;
-  box-shadow: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow),
-    inset -2px -2px var(--3d-shadow), inset 2px 2px var(--3d-hi);
-}
-
-.groupbox > legend {
-  padding: 0 0.3rem;
-  background: var(--face);
-  font-weight: 700;
-}
-
-/* Small label chip used for tags */
-.chip {
-  display: inline-block;
-  padding: 0 0.4rem;
-  background: var(--face-light);
-  border: 1px solid var(--3d-shadow);
-  font-size: 12px;
+  border-top: 1px dashed var(--dim);
+  margin: 0.6em 0;
 }
 
 .sr-only {
@@ -153,7 +170,6 @@ svg {
   border: 0;
 }
 
-/* Retro scrollbars where supported */
 * {
-  scrollbar-color: var(--3d-shadow) var(--face-light);
+  scrollbar-color: var(--dim) var(--bg);
 }

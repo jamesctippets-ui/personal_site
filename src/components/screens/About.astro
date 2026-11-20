@@ -1,0 +1,32 @@
+---
+import { profile } from '@/data/profile';
+---
+
+<section class="frame">
+  <h2 class="frame-title">ABOUT.TXT</h2>
+  <p class="name">{profile.name.toUpperCase()}</p>
+  <p>{profile.title} <span class="dim">·</span> {profile.location}</p>
+  <hr class="rule" />
+  <p class="bright">{profile.tagline}</p>
+  {profile.about.map((p) => <p class="para">{p}</p>)}
+  <hr class="rule" />
+  <p>
+    Try: <a class="cmd-link" href="#projects" data-cmd="projects">projects</a>,
+    <a class="cmd-link" href="#skills" data-cmd="skills">skills</a>,
+    <a class="cmd-link" href="#resume" data-cmd="resume">resume</a>,
+    <a class="cmd-link" href="#contact" data-cmd="contact">contact</a>
+  </p>
+</section>
+
+<style>
+  .name {
+    font-size: 2em;
+    line-height: 1;
+    color: var(--bright);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.2em;
+  }
+  .para {
+    margin-top: 0.6em;
+  }
+</style>

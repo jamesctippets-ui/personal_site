@@ -1,0 +1,45 @@
+---
+// HELP output. The command list itself lives in src/scripts/commands.ts so the
+// terminal and this screen can't drift apart.
+import { helpRows } from '@/scripts/commands';
+---
+
+<p>Click a command, or type it at the prompt and press Enter.</p>
+<table class="help">
+  <tbody>
+    {
+      helpRows().map((row) => (
+        <tr>
+          <th scope="row">
+            {row.run ? (
+              <a class="cmd-link" href={`#${row.run}`} data-cmd={row.run}>
+                {row.name}
+              </a>
+            ) : (
+              <span class="bright">{row.name}</span>
+            )}
+          </th>
+          <td>{row.description}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+<p class="dim">Keys: Tab completes, Up/Down recall history, Ctrl+L clears. F1–F4 and F6–F7 are shortcuts.</p>
+
+<style>
+  .help {
+    border-collapse: collapse;
+    margin: 0.5em 0;
+  }
+  th {
+    text-align: left;
+    font-weight: inherit;
+    padding: 0 1.5em 0 0;
+    white-space: nowrap;
+    vertical-align: top;
+  }
+  td {
+    padding: 0;
+  }
+</style>
