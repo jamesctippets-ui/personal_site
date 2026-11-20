@@ -7,7 +7,7 @@
 // visitor's mail app with the same template filled in.
 
 export const inquiry = {
-  web3formsKey: '',
+  web3formsKey: '6d36a271-1f9f-40bc-8b1a-b88c5d298fee',
   services: [
     'Hardware & repair',
     'Microsoft 365 management',
