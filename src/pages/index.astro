@@ -1,426 +1,350 @@
 ---
 import Base from '@/layouts/Base.astro';
-import Icon, { type IconName } from '@/components/Icon.astro';
-import Window from '@/components/Window.astro';
-import About from '@/components/content/About.astro';
-import Projects from '@/components/content/Projects.astro';
-import Skills from '@/components/content/Skills.astro';
-import References from '@/components/content/References.astro';
-import ResumeDoc from '@/components/content/ResumeDoc.astro';
+import Help from '@/components/screens/Help.astro';
+import About from '@/components/screens/About.astro';
+import Projects from '@/components/screens/Projects.astro';
+import Skills from '@/components/screens/Skills.astro';
+import ResumeText from '@/components/screens/ResumeText.astro';
+import Consulting from '@/components/screens/Consulting.astro';
+import Contact from '@/components/screens/Contact.astro';
+import References from '@/components/screens/References.astro';
 import { profile } from '@/data/profile';
-import { projects } from '@/data/projects';
 import { references } from '@/data/references';
-import { withBase } from '@/utils';
 
-// Desktop shortcuts. `open` names a window id below; `href` is an external link.
-interface Shortcut {
-  label: string;
-  icon: IconName;
-  open?: string;
-  href?: string;
-}
-
-const github = profile.links.find((l) => l.label.toLowerCase() === 'github');
-
-const shortcuts: Shortcut[] = [
-  { label: 'About Me', icon: 'about', open: 'about' },
-  { label: 'Projects', icon: 'projects', open: 'projects' },
-  { label: 'Skills', icon: 'skills', open: 'skills' },
-  ...(references.length ? [{ label: 'References', icon: 'references', open: 'references' } as const] : []),
-  { label: 'Resume.doc', icon: 'resume', open: 'resume' },
-  ...(github ? [{ label: 'GitHub', icon: 'globe', href: github.href } as const] : []),
+// Menu bar entries. `cmd` must be a screen command from src/scripts/commands.ts.
+const menu = [
+  { label: 'About', cmd: 'about' },
+  { label: 'Projects', cmd: 'projects' },
+  { label: 'Skills', cmd: 'skills' },
+  { label: 'Resume', cmd: 'resume' },
+  ...(profile.consulting.open ? [{ label: 'Hire me', cmd: 'consulting' }] : []),
+  { label: 'Contact', cmd: 'contact' },
+  { label: 'Help', cmd: 'help' },
 ];
 
-const osName = `${profile.name.split(' ')[0]}OS`;
+// F-key bar. Keys match the FKEYS map in terminal.ts (F5 is left to the browser).
+const fkeys = [
+  { key: 'F1', label: 'Help', cmd: 'help' },
+  { key: 'F2', label: 'About', cmd: 'about' },
+  { key: 'F3', label: 'Projects', cmd: 'projects' },
+  { key: 'F4', label: 'Skills', cmd: 'skills' },
+  { key: 'F6', label: 'Resume', cmd: 'resume' },
+  { key: 'F7', label: 'Contact', cmd: 'contact' },
+  { key: '', label: 'Color', cmd: 'color' },
+  { key: '', label: 'Exit', cmd: 'exit' },
+];
+
+// Screens in no-JS reading order. Each becomes a <section data-screen> that the
+// terminal clones when its command runs.
+const screens = [
+  { id: 'about', file: 'about.txt' },
+  { id: 'projects', file: 'projects' },
+  { id: 'skills', file: 'skills.txt' },
+  { id: 'resume', file: 'resume.doc' },
+  ...(profile.consulting.open ? [{ id: 'consulting', file: 'hire_me.txt' }] : []),
+  ...(references.length ? [{ id: 'references', file: 'refs.txt' }] : []),
+  { id: 'contact', file: 'contact.txt' },
+  { id: 'help', file: 'help.txt' },
+];
 ---
 
 <Base>
-  <div class="desktop" id="desktop">
-    <h1 class="sr-only">{profile.name}, {profile.title}</h1>
+  <div class="crt">
+    <header class="menubar">
+      <span class="brand inv">JamesOS</span>
+      <nav aria-label="Sections">
+        <ul>
+          {
+            menu.map((m) => (
+              <li>
+                <a href={`#${m.cmd}`} data-cmd={m.cmd}>
+                  {m.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <span id="clock" class="clock dim" aria-hidden="true"></span>
+    </header>
 
-    <nav class="icons" aria-label="Desktop shortcuts">
+    <main id="output" class="output" role="log" aria-live="polite" aria-label="Terminal output">
+      <h1 class="sr-only">{profile.name}, {profile.title}</h1>
+      <div id="screens">
+        {
+          screens.map((s) => (
+            <section id={s.id} data-screen={s.id} class="screen">
+              <p class="static-echo">
+                <span class="p">C:\JAMES&gt;</span>type {s.file}
+              </p>
+              {s.id === 'about' && <About />}
+              {s.id === 'projects' && <Projects />}
+              {s.id === 'skills' && <Skills />}
+              {s.id === 'resume' && <ResumeText />}
+              {s.id === 'consulting' && <Consulting />}
+              {s.id === 'references' && <References />}
+              {s.id === 'contact' && <Contact />}
+              {s.id === 'help' && <Help />}
+            </section>
+          ))
+        }
+      </div>
+    </main>
+
+    <form id="prompt" class="prompt" autocomplete="off">
+      <label for="cmd" class="p">C:\JAMES&gt;</label>
+      <input
+        id="cmd"
+        name="cmd"
+        type="text"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="go"
+        aria-label="Command"
+        placeholder="type help"
+      />
+      <button type="submit" class="enter">Enter</button>
+    </form>
+
+    <footer class="fkeys">
       <ul>
         {
-          shortcuts.map((s) => (
+          fkeys.map((f) => (
             <li>
-              <a
-                class="desk-icon"
-                href={s.open ? `#${s.open}` : s.href}
-                data-open={s.open}
-                target={s.href ? '_blank' : undefined}
-                rel={s.href ? 'noopener' : undefined}
-              >
-                <Icon name={s.icon} size={32} />
-                <span>{s.label}</span>
-              </a>
+              <button type="button" data-cmd={f.cmd}>
+                {f.key && <span class="key">{f.key}</span>}
+                <span>{f.label}</span>
+              </button>
             </li>
           ))
         }
       </ul>
-    </nav>
+    </footer>
 
-    <Window id="about" title="About Me" icon="about" width={520}>
-      <About />
-    </Window>
-
-    <Window
-      id="projects"
-      title="Projects"
-      icon="projects"
-      width={620}
-      height={520}
-      status={`${projects.length} object(s)`}
-      surface="face"
-    >
-      <Projects />
-    </Window>
-
-    <Window id="skills" title="Skills" icon="skills" width={560} surface="face">
-      <Skills />
-    </Window>
-
-    {
-      references.length > 0 && (
-        <Window
-          id="references"
-          title="References"
-          icon="references"
-          width={520}
-          status={`${references.length} message(s)`}
-        >
-          <References />
-        </Window>
-      )
-    }
-
-    <Window id="resume" title="Resume.doc" icon="resume" width={720} height={600}>
-      <div slot="toolbar" class="toolbar">
-        <a class="btn" href={withBase('resume')}>Printable version</a>
-        {
-          profile.resumePdf && (
-            <a class="btn" href={withBase(profile.resumePdf)} download>
-              Download PDF
-            </a>
-          )
-        }
-      </div>
-      <ResumeDoc />
-    </Window>
-  </div>
-
-  <div id="start-menu" class="start-menu raised" hidden>
-    <div class="banner" aria-hidden="true"><span>{osName}</span></div>
-    <ul aria-label="Start menu">
-      {
-        shortcuts
-          .filter((s) => s.open)
-          .map((s) => (
-            <li>
-              <a href={`#${s.open}`} data-open={s.open}>
-                <Icon name={s.icon} size={24} />
-                <span>{s.label}</span>
-              </a>
-            </li>
-          ))
-      }
-      <li class="sep" role="separator"></li>
-      {
-        profile.email && (
-          <li>
-            <a href={`mailto:${profile.email}`}>
-              <Icon name="mail" size={24} />
-              <span>Send Email</span>
-            </a>
-          </li>
-        )
-      }
-      {
-        profile.links.map((link) => (
-          <li>
-            <a href={link.href} target="_blank" rel="me noopener">
-              <Icon name="globe" size={24} />
-              <span>{link.label}</span>
-            </a>
-          </li>
-        ))
-      }
-      <li class="sep" role="separator"></li>
-      <li>
-        <button type="button" data-shutdown>
-          <Icon name="power" size={24} />
-          <span>Shut Down…</span>
-        </button>
-      </li>
-    </ul>
-  </div>
-
-  <footer class="taskbar raised">
-    <button
-      type="button"
-      id="start-button"
-      class="btn start"
-      aria-expanded="false"
-      aria-controls="start-menu"
-    >
-      <Icon name="computer" size={18} />
-      <span>Start</span>
-    </button>
-    <div class="tasks" id="tasks" aria-label="Open windows"></div>
-    <div class="tray">
-      <time id="clock"></time>
+    <div id="halt" class="halt" hidden>
+      <p>JamesOS has halted.</p>
+      <p class="dim">Thanks for visiting. Press any key or tap to restart.</p>
     </div>
-  </footer>
-
-  <div id="shutdown" class="shutdown" hidden>
-    <p>It's now safe to close this tab.</p>
-    <p class="small">Thanks for stopping by.</p>
-    <button type="button" class="btn" data-restart>Restart</button>
   </div>
 </Base>
 
 <script>
-  import '@/scripts/desktop';
+  import '@/scripts/terminal';
 </script>
 
 <style>
-  /* ---------- No-JS fallback: a normal scrolling page ---------- */
-  .desktop {
+  /* ---------- Shared ---------- */
+  .crt {
+    position: relative;
     min-height: 100vh;
-    padding: 1rem;
   }
-  .taskbar,
-  .start-menu {
+  /* Faint scanlines over everything; purely decorative. */
+  .crt::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.18) 0,
+      rgba(0, 0, 0, 0.18) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 50;
+  }
+
+  .menubar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2em 1em;
+    padding: 0.35em 0.75em;
+    border-bottom: 3px double var(--fg);
+  }
+  .brand {
+    letter-spacing: 0.05em;
+  }
+  .menubar ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.9em;
+    flex: 1;
+  }
+  .menubar a {
+    color: var(--fg);
+    text-decoration: none;
+    padding: 0 0.2em;
+  }
+  .menubar a::first-letter {
+    text-decoration: underline;
+  }
+  .menubar a:hover,
+  .menubar a:focus-visible {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  .output {
+    padding: 0.75em 1em 1.5em;
+  }
+  .output :global(.echo),
+  .static-echo {
+    margin-top: 1em;
+    color: var(--dim);
+  }
+  .output :global(.p) {
+    color: var(--fg);
+  }
+  .output :global(.dir) {
+    margin: 0.3em 0;
+  }
+  .output :global(.dir div) {
+    display: flex;
+    gap: 1em;
+  }
+  .output :global(.dir .cmd-link) {
+    width: 9em;
+  }
+  .output :global(.block) {
+    max-width: 62em;
+  }
+  .screen {
+    max-width: 62em;
+  }
+
+  /* ---------- No JS: a plain scrolling page ---------- */
+  .prompt,
+  .fkeys {
     display: none;
   }
 
-  /* ---------- Desktop mode (JS enabled) ---------- */
-  :global(html.js) body {
-    overflow: hidden;
-  }
-  :global(html.js) .desktop {
-    position: fixed;
-    inset: 0 0 var(--taskbar-h) 0;
-    min-height: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .icons ul {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 5.75rem);
-    gap: 0.5rem;
-    list-style: none;
-    margin: 0 0 1rem;
-    padding: 0;
-  }
-  :global(html.js) .icons ul {
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    grid-template-rows: repeat(auto-fill, 5.25rem);
-    height: calc(100vh - var(--taskbar-h));
-    height: calc(100dvh - var(--taskbar-h));
-    padding: 0.75rem 0.5rem;
-    gap: 0.75rem 0.5rem;
-  }
-  .desk-icon {
+  /* ---------- Terminal mode (JS) ---------- */
+  :global(html.js) .crt {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-    width: 5.75rem;
-    padding: 0.25rem 0.15rem;
-    color: #fff;
-    text-decoration: none;
-    text-align: center;
-    font-size: 13px;
-    -webkit-tap-highlight-color: transparent;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
   }
-  .desk-icon span {
-    padding: 0 0.2rem;
-    text-shadow: 1px 1px 0 #000;
-    line-height: 1.25;
+  :global(html.js) .output {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
-  .desk-icon:focus-visible {
-    outline: none;
-  }
-  .desk-icon:focus-visible span {
-    outline: 1px dotted #fff;
-  }
-  .desk-icon:global(.is-selected) span {
-    background: var(--select);
-    text-shadow: none;
-  }
-  .desk-icon:global(.is-selected) :global(svg) {
-    filter: sepia(1) hue-rotate(180deg) saturate(4) brightness(0.7);
+  :global(html.js) #screens {
+    display: none;
   }
 
-  .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    padding: 3px 2px 1px;
-  }
-
-  /* ---------- Taskbar ---------- */
-  :global(html.js) .taskbar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10000;
+  :global(html.js) .prompt {
     display: flex;
     align-items: center;
-    gap: 4px;
-    height: var(--taskbar-h);
-    padding: 4px 3px 3px;
-    box-shadow: inset 0 1px var(--3d-light), inset 0 2px var(--3d-hi);
+    gap: 0.3em;
+    padding: 0.3em 1em;
+    border-top: 1px dashed var(--dim);
   }
-  .start {
-    min-width: 0;
-    height: 100%;
-    padding: 0 0.6rem 0 0.4rem;
-    font-weight: 700;
-    flex: none;
-  }
-  .start[aria-expanded='true'] {
-    box-shadow: var(--pressed);
-  }
-  .tasks {
-    display: flex;
-    gap: 3px;
+  .prompt input {
     flex: 1;
     min-width: 0;
-    height: 100%;
-    overflow: hidden;
-  }
-  .tasks :global(.task) {
-    justify-content: flex-start;
-    flex: 0 1 10rem;
-    min-width: 2.5rem;
-    height: 100%;
-    padding: 0 0.5rem;
-    overflow: hidden;
-  }
-  .tasks :global(.task[aria-pressed='true']) {
-    background: repeating-conic-gradient(var(--face-light) 0 25%, #fff 0 50%) 0 0 / 2px 2px;
-    font-weight: 700;
-  }
-  .tasks :global(.task span) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .tasks :global(.task svg) {
-    flex: none;
-  }
-  .tray {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 0.75rem;
-    flex: none;
-    font-size: 13px;
-    box-shadow: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow);
-  }
-
-  /* ---------- Start menu ---------- */
-  :global(html.js) .start-menu:not([hidden]) {
-    position: fixed;
-    left: 3px;
-    bottom: calc(var(--taskbar-h) - 2px);
-    z-index: 10001;
-    display: flex;
-    padding: 3px;
-    min-width: 13.5rem;
-  }
-  .banner {
-    display: flex;
-    align-items: flex-end;
-    width: 1.75rem;
-    background: linear-gradient(0deg, var(--title-a), var(--title-b));
-    color: #fff;
-  }
-  .banner span {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    padding: 0.5rem 0;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .start-menu ul {
-    flex: 1;
-    list-style: none;
-    margin: 0;
-    padding: 2px 0;
-  }
-  .start-menu a,
-  .start-menu button {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    width: 100%;
-    padding: 0.3rem 1rem 0.3rem 0.4rem;
+    background: transparent;
     border: 0;
-    background: none;
-    color: var(--text);
+    outline: none;
+    color: var(--bright);
     font: inherit;
-    text-align: left;
-    text-decoration: none;
+    text-shadow: inherit;
+    caret-color: var(--fg);
+    padding: 0.15em 0;
+    /* iOS zooms into inputs under 16px; --size is always above that. */
+  }
+  .prompt input::placeholder {
+    color: var(--dim);
+    opacity: 0.7;
+  }
+  .prompt input:focus::placeholder {
+    color: transparent;
+  }
+  .enter {
+    border: 1px solid var(--fg);
+    background: transparent;
+    padding: 0 0.6em;
     cursor: pointer;
   }
-  .start-menu a:hover,
-  .start-menu a:focus-visible,
-  .start-menu button:hover,
-  .start-menu button:focus-visible {
-    background: var(--select);
-    color: var(--select-text);
+  .enter:hover,
+  .enter:focus-visible {
+    background: var(--fg);
+    color: var(--bg);
     outline: none;
   }
-  .sep {
-    height: 2px;
-    margin: 3px 2px;
-    box-shadow: inset 0 1px var(--3d-shadow), inset 0 -1px var(--3d-hi);
+
+  :global(html.js) .fkeys {
+    display: block;
+    padding: 0.25em 0.75em calc(0.3em + env(safe-area-inset-bottom));
+    border-top: 3px double var(--fg);
+  }
+  .fkeys ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em 0.9em;
+  }
+  .fkeys button {
+    display: inline-flex;
+    gap: 0.25em;
+    border: 0;
+    background: none;
+    padding: 0 0.15em;
+    cursor: pointer;
+  }
+  .fkeys .key {
+    color: var(--bg);
+    background: var(--dim);
+    text-shadow: none;
+    padding: 0 0.2em;
+  }
+  .fkeys button:hover,
+  .fkeys button:focus-visible {
+    background: var(--fg);
+    color: var(--bg);
+    outline: none;
   }
 
-  /* ---------- Shut down screen ---------- */
-  .shutdown:not([hidden]) {
+  /* ---------- Halt screen ---------- */
+  .halt:not([hidden]) {
     position: fixed;
     inset: 0;
-    z-index: 20000;
+    z-index: 40;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
-    padding: 1rem;
-    background: #000;
-    color: #f0a030;
+    gap: 0.4em;
+    padding: 1em;
+    background: var(--bg);
     text-align: center;
-    font-size: clamp(18px, 4vw, 30px);
-  }
-  .shutdown .small {
-    font-size: 15px;
-    color: #c8c8c8;
-    margin-bottom: 1.5rem;
+    font-size: 1.3em;
+    cursor: pointer;
   }
 
   /* ---------- Phones ---------- */
-  @media (max-width: 720px) {
-    :global(html.js) .icons ul {
-      grid-auto-flow: row;
-      grid-template-rows: none;
-      grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
-      justify-items: center;
-      height: auto;
-      padding: 1rem 0.5rem;
-    }
-    .tasks :global(.task span) {
+  @media (max-width: 640px) {
+    .clock {
       display: none;
     }
-    .tasks :global(.task) {
-      flex: 0 0 auto;
-      justify-content: center;
+    .output {
+      padding: 0.5em 0.75em 1em;
+    }
+    /* The menu bar already covers navigation; the F-key bar would just eat screen. */
+    :global(html.js) .fkeys {
+      display: none;
+    }
+    :global(html.js) .prompt {
+      padding-bottom: calc(0.3em + env(safe-area-inset-bottom));
+    }
+  }
+  @media (hover: none) {
+    .fkeys .key {
+      display: none;
     }
   }
 </style>

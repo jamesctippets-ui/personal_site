@@ -1,36 +1,30 @@
 ---
-// Standalone, printable resume. On screen it looks like a document open in a
-// retro word-processor window; in print it is plain black-on-white paper.
+// Standalone, printable resume. On screen it sits in a text-mode frame; in
+// print it is plain black-on-white paper (see ResumeDoc's print styles).
 import Base from '@/layouts/Base.astro';
-import Icon from '@/components/Icon.astro';
-import ResumeDoc from '@/components/content/ResumeDoc.astro';
+import ResumeDoc from '@/components/ResumeDoc.astro';
 import { profile } from '@/data/profile';
 import { withBase } from '@/utils';
 ---
 
 <Base title="Resume" description={`Resume of ${profile.name}, ${profile.title}.`}>
   <div class="page">
-    <div class="frame raised">
-      <header class="titlebar">
-        <Icon name="resume" size={16} />
-        <h1>Resume.doc</h1>
-      </header>
-      <div class="toolbar">
-        <a class="btn" href={withBase('#resume')}>← Back to desktop</a>
-        <button class="btn" type="button" id="print">Print</button>
+    <header class="bar">
+      <span class="inv">PRINT RESUME.DOC</span>
+      <nav>
+        <a href={withBase('#resume')}>[ Back to JamesOS ]</a>
+        <button type="button" id="print">[ Print / Save PDF ]</button>
         {
           profile.resumePdf && (
-            <a class="btn" href={withBase(profile.resumePdf)} download>
-              Download PDF
+            <a href={withBase(profile.resumePdf)} download>
+              [ Download PDF ]
             </a>
           )
         }
-      </div>
-      <div class="canvas sunken">
-        <div class="paper">
-          <ResumeDoc />
-        </div>
-      </div>
+      </nav>
+    </header>
+    <div class="paper">
+      <ResumeDoc />
     </div>
   </div>
 </Base>
@@ -40,63 +34,60 @@ import { withBase } from '@/utils';
 </script>
 
 <style>
-  :global(html.js) body {
-    overflow: auto;
-  }
   .page {
-    min-height: 100vh;
-    padding: clamp(0px, 3vw, 2rem);
-  }
-  .frame {
-    max-width: 60rem;
+    max-width: 56rem;
     margin: 0 auto;
-    padding: 3px;
+    padding: 1rem clamp(0.5rem, 3vw, 2rem) 2rem;
   }
-  .titlebar {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 3px 4px;
-    background: linear-gradient(90deg, var(--title-a), var(--title-b));
-    color: #fff;
-  }
-  h1 {
-    font-size: 13px;
-  }
-  .toolbar {
+  .bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    padding: 4px 2px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4em 1em;
+    margin-bottom: 1rem;
   }
-  .canvas {
-    background: var(--3d-shadow);
-    padding: clamp(0.5rem, 3vw, 2rem);
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+  }
+  #print {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--bright);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  #print:hover,
+  #print:focus-visible {
+    background: var(--fg);
+    color: var(--bg);
+    text-decoration: none;
+    outline: none;
   }
   .paper {
-    max-width: 50rem;
-    margin: 0 auto;
-    background: #fff;
+    background: #fbfaf6;
+    text-shadow: none;
     padding: clamp(1.25rem, 5vw, 3.25rem);
-    box-shadow: 3px 3px 0 #000;
+    border: 3px double var(--fg);
   }
 
   @media print {
     :global(body) {
       background: #fff;
+      text-shadow: none;
     }
     .page,
-    .frame,
-    .canvas,
     .paper {
       padding: 0;
       margin: 0;
       max-width: none;
+      border: 0;
       background: none;
-      box-shadow: none;
     }
-    .titlebar,
-    .toolbar {
+    .bar {
       display: none;
     }
   }

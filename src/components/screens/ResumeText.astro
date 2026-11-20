@@ -27,7 +27,7 @@ import { withBase } from '@/utils';
           {role.title} @ {role.organization}
         </p>
         <p class="dim">
-          {role.start} – {role.end}
+          {role.start ? `${role.start} – ${role.end}` : role.end}
           {role.location && ` · ${role.location}`}
         </p>
         <ul>

@@ -1,0 +1,47 @@
+---
+import { profile } from '@/data/profile';
+const subject = encodeURIComponent('IT consulting inquiry');
+---
+
+<section class="frame">
+  <h2 class="frame-title">HIRE_ME.TXT</h2>
+  <p><span class="inv">OPEN TO INQUIRIES</span></p>
+  <p class="blurb">{profile.consulting.blurb}</p>
+  <p class="bright">Priority areas:</p>
+  <ol>
+    {
+      profile.consulting.focus.map((f, i) => (
+        <li>
+          <span class="dim">{i + 1}.</span> {f}
+        </li>
+      ))
+    }
+  </ol>
+  <hr class="rule" />
+  {
+    profile.email ? (
+      <p>
+        <a href={`mailto:${profile.email}?subject=${subject}`}>[ Email me about a project ]</a>
+      </p>
+    ) : (
+      <p>
+        See <a class="cmd-link" href="#contact" data-cmd="contact">contact</a> for how to reach me.
+      </p>
+    )
+  }
+</section>
+
+<style>
+  .blurb {
+    margin: 0.5em 0;
+  }
+  ol {
+    list-style: none;
+    padding: 0;
+    margin: 0.2em 0 0;
+  }
+  li {
+    padding-left: 1.6em;
+    text-indent: -1.6em;
+  }
+</style>

@@ -28,7 +28,7 @@ const screens = new Map<string, HTMLElement>();
 screensEl.querySelectorAll<HTMLElement>('[data-screen]').forEach((s) => screens.set(s.dataset.screen!, s));
 screensEl.remove();
 
-const history: string[] = [];
+const cmdHistory: string[] = [];
 let historyIndex = 0;
 let booting = false;
 let skipBoot: (() => void) | null = null;
@@ -118,7 +118,7 @@ function exec(raw: string): void {
 
   if ((SCREEN_COMMANDS as readonly string[]).includes(cmd)) {
     printScreen(cmd);
-    history.replaceState(null, '', `#${cmd}`);
+    window.history.replaceState(null, '', `#${cmd}`);
     return;
   }
 
@@ -207,8 +207,8 @@ function run(raw: string, { record = true } = {}) {
   const echo = line('', 'echo');
   echo.append(Object.assign(document.createElement('span'), { className: 'p', textContent: PROMPT }), raw);
   if (record && raw.trim()) {
-    if (history[history.length - 1] !== raw) history.push(raw);
-    historyIndex = history.length;
+    if (cmdHistory[cmdHistory.length - 1] !== raw) cmdHistory.push(raw);
+    historyIndex = cmdHistory.length;
   }
   exec(raw);
   if (output.contains(echo)) echo.scrollIntoView({ block: 'start' });
@@ -298,14 +298,14 @@ form.addEventListener('submit', (e) => {
 
 input.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowUp') {
-    if (!history.length) return;
+    if (!cmdHistory.length) return;
     e.preventDefault();
     historyIndex = Math.max(0, historyIndex - 1);
-    input.value = history[historyIndex] ?? '';
+    input.value = cmdHistory[historyIndex] ?? '';
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
-    historyIndex = Math.min(history.length, historyIndex + 1);
-    input.value = history[historyIndex] ?? '';
+    historyIndex = Math.min(cmdHistory.length, historyIndex + 1);
+    input.value = cmdHistory[historyIndex] ?? '';
   } else if (e.key === 'Tab') {
     const value = input.value;
     const parts = value.split(/\s+/);

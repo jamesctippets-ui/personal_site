@@ -1,6 +1,6 @@
 ---
-// The resume itself. Rendered inside the Resume window on the desktop and on
-// the standalone /resume page, which is the printable version.
+// The paper-style resume on the standalone /resume page (the printable version).
+// The terminal's RESUME command uses screens/ResumeText.astro instead.
 import { profile } from '@/data/profile';
 import { resume } from '@/data/resume';
 import { skills } from '@/data/skills';
@@ -115,12 +115,22 @@ import { skills } from '@/data/skills';
     line-height: 1.5;
     color: #111;
   }
+  .resume a {
+    color: #1a4fa0;
+  }
+  .resume a:hover,
+  .resume a:focus-visible {
+    background: none;
+    color: #0b2a6a;
+    text-decoration: underline;
+  }
   header {
     border-bottom: 2px solid #111;
     padding-bottom: 0.75rem;
     margin-bottom: 1.1rem;
   }
   h1 {
+    font-weight: 700;
     font-size: 26px;
     letter-spacing: 0.02em;
   }
@@ -142,7 +152,8 @@ import { skills } from '@/data/skills';
     margin-top: 1.2rem;
   }
   h2 {
-    font-family: var(--font);
+    font-weight: 700;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -165,6 +176,7 @@ import { skills } from '@/data/skills';
   }
   h3 {
     font-size: 15px;
+    font-weight: 700;
   }
   .org {
     font-weight: 400;
@@ -178,6 +190,7 @@ import { skills } from '@/data/skills';
     margin: 0;
   }
   .entry ul {
+    list-style: disc;
     margin: 0.3rem 0 0;
     padding-left: 1.2rem;
   }

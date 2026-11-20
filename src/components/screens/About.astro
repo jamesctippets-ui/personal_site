@@ -10,11 +10,15 @@ import { profile } from '@/data/profile';
   <p class="bright">{profile.tagline}</p>
   {profile.about.map((p) => <p class="para">{p}</p>)}
   <hr class="rule" />
-  <p>
-    Try: <a class="cmd-link" href="#projects" data-cmd="projects">projects</a>,
-    <a class="cmd-link" href="#skills" data-cmd="skills">skills</a>,
-    <a class="cmd-link" href="#resume" data-cmd="resume">resume</a>,
-    <a class="cmd-link" href="#contact" data-cmd="contact">contact</a>
+  <p class="try">
+    <span>Try:</span>
+    {
+      ['projects', 'skills', 'resume', ...(profile.consulting.open ? ['consulting'] : []), 'contact'].map((c) => (
+        <a class="cmd-link" href={`#${c}`} data-cmd={c}>
+          {c}
+        </a>
+      ))
+    }
   </p>
 </section>
 
@@ -25,6 +29,11 @@ import { profile } from '@/data/profile';
     color: var(--bright);
     letter-spacing: 0.08em;
     margin-bottom: 0.2em;
+  }
+  .try {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.8em;
   }
   .para {
     margin-top: 0.6em;
