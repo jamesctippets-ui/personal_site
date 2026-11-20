@@ -1,0 +1,713 @@
+---
+// "JamesOS Orchard": a sleek Mac-style desktop look (top menu bar, glassy dock,
+// rounded windows with traffic-light buttons). All art and wording are original,
+// with no real logos. Opened by typing APPLE in the terminal. Windows are driven
+// by src/scripts/desk.ts.
+import Plain from '@/layouts/Plain.astro';
+import DeskWindow from '@/components/desk/DeskWindow.astro';
+import Glyph from '@/components/plain/Glyph.astro';
+import Content from '@/components/plain/Content.astro';
+import LookSwitcher from '@/components/plain/LookSwitcher.astro';
+import { sections } from '@/components/plain/sections';
+import { profile } from '@/data/profile';
+import { withBase } from '@/utils';
+
+const tint: Record<string, string> = {
+  about: 'linear-gradient(160deg,#7cc4ff,#2f7ae5)',
+  experience: 'linear-gradient(160deg,#ffd27a,#e8892b)',
+  projects: 'linear-gradient(160deg,#9fe6ff,#3fa7d6)',
+  skills: 'linear-gradient(160deg,#9ff0b8,#2fa865)',
+  lab: 'linear-gradient(160deg,#c3cad6,#5d6878)',
+  museum: 'linear-gradient(160deg,#f3e6c8,#b69a62)',
+  consulting: 'linear-gradient(160deg,#ffb3c7,#e0507a)',
+  contact: 'linear-gradient(160deg,#ffffff,#c9d3e0)',
+};
+---
+
+<Plain title="JamesOS Orchard" themeColor="#e9e4f2" bodyClass="orchard">
+  <header class="menubar">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 20 20" width="15" height="15"><path d="M10 2c3 3 6 5 6 9a6 6 0 0 1-12 0c0-4 3-6 6-9z" fill="currentColor" /><path d="M10 6v10" stroke="#fff" stroke-width="1.6" /></svg>
+    </span>
+    <strong id="active-title" data-idle="JamesOS">JamesOS</strong>
+    <nav class="menus" aria-label="Menu">
+      <a href="#about" data-open="about">About</a>
+      <a href="#experience" data-open="experience">Experience</a>
+      <a href="#projects" data-open="projects">Projects</a>
+      <a href="#contact" data-open="contact">Contact</a>
+    </nav>
+    <span class="spacer"></span>
+    <a class="mb-term" href={withBase('')} title="Back to the terminal">&gt;_ Terminal</a>
+    <span id="clock" class="clock" data-format="long"></span>
+  </header>
+
+  <div id="desktop" class="desktop" data-gutter="40" data-first="about">
+    <h1 class="sr-only">{profile.name}, {profile.title}</h1>
+    <nav class="icons" aria-label="Desktop">
+      <ul>
+        <li>
+          <a class="desk-icon" href={withBase('resume/')}>
+            <Glyph name="resume" size={44} /><span>Resume</span>
+          </a>
+        </li>
+        <li>
+          <a class="desk-icon" href={withBase('')}>
+            <Glyph name="terminal" size={44} /><span>Terminal</span>
+          </a>
+        </li>
+        <li>
+          <a class="desk-icon" href={withBase('modern/')}>
+            <Glyph name="globe" size={44} /><span>Modern site</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    {
+      sections.map((s) => (
+        <DeskWindow id={s.id} title={s.title} short={s.label} glyph={s.glyph} width={s.width} height={s.height}>
+          <Content section={s.id} />
+        </DeskWindow>
+      ))
+    }
+    <LookSwitcher current="mac" label="Other looks:" />
+  </div>
+
+  <nav class="dock" aria-label="Dock">
+    <ul>
+      {
+        sections.map((s) => (
+          <li>
+            <a href={`#${s.id}`} data-open={s.id} data-label={s.label} aria-label={s.label}>
+              <span class="tile" style={`background:${tint[s.id] ?? tint.contact}`}>
+                <Glyph name={s.glyph} size={30} />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+      <li class="dock-sep" role="separator"></li>
+      <li>
+        <a href={withBase('resume/')} data-label="Printable resume" aria-label="Printable resume">
+          <span class="tile" style="background:linear-gradient(160deg,#fff,#dfe5ee)"><Glyph name="resume" size={30} /></span>
+        </a>
+      </li>
+      <li>
+        <a href={withBase('')} data-label="Terminal" aria-label="Back to the terminal">
+          <span class="tile" style="background:#111"><Glyph name="terminal" size={30} /></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</Plain>
+
+<script>
+  import '@/scripts/desk';
+  import '@/scripts/inquiry';
+</script>
+
+<style is:global>
+  body.orchard {
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --accent: #0a6cf0;
+    --line: #e2e2e7;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    /* Original wallpaper: soft dusk dunes. */
+    background:
+      radial-gradient(80% 60% at 20% 110%, #ff9a6b 0, transparent 60%),
+      radial-gradient(70% 50% at 90% 100%, #c661c9 0, transparent 60%),
+      radial-gradient(90% 70% at 60% 0%, #6f8cff 0, transparent 65%),
+      linear-gradient(160deg, #3b3f9e, #8c5bb8 50%, #f2a07b);
+    background-attachment: fixed;
+  }
+
+  /* ---------- Menu bar ---------- */
+  .orchard .menubar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 28px;
+    padding: 0 14px;
+    background: rgba(246, 246, 250, 0.72);
+    backdrop-filter: saturate(1.8) blur(18px);
+    -webkit-backdrop-filter: saturate(1.8) blur(18px);
+    font-size: 13px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  }
+  .orchard .logo {
+    color: #2b2b2e;
+    display: flex;
+  }
+  .orchard .menus {
+    display: flex;
+    gap: 14px;
+  }
+  .orchard .menubar a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .orchard .menubar a:hover,
+  .orchard .menubar a:focus-visible {
+    background: rgba(0, 0, 0, 0.08);
+    outline: none;
+  }
+  .orchard .spacer {
+    flex: 1;
+  }
+  .orchard .mb-term {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+  }
+  .orchard .clock {
+    white-space: nowrap;
+  }
+
+  /* ---------- No JS: stacked windows ---------- */
+  .orchard .desktop {
+    padding: 20px 16px 40px;
+  }
+  .orchard .icons ul,
+  .orchard .dock ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .orchard .icons ul {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .orchard .win {
+    display: flex;
+    flex-direction: column;
+    max-width: 46rem;
+    margin: 0 auto 20px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.25),
+      0 18px 50px rgba(20, 10, 60, 0.35);
+  }
+  .orchard .dock {
+    display: none;
+  }
+  .orchard .looks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 0.9em;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  .orchard .looks a {
+    color: #fff;
+  }
+
+  /* ---------- Desktop mode (JS) ---------- */
+  html.js body.orchard {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  html.js .orchard .desktop {
+    position: absolute;
+    inset: 28px 0 78px 0;
+    padding: 0;
+    overflow: visible;
+  }
+  html.js .orchard .icons {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+  html.js .orchard .icons ul {
+    flex-direction: column;
+    gap: 6px;
+  }
+  html.js .orchard .looks {
+    position: absolute;
+    left: 16px;
+    bottom: 10px;
+    font-size: 12px;
+  }
+  html.js .orchard .win {
+    position: absolute;
+    display: none;
+    margin: 0;
+    max-width: none;
+    min-width: 16rem;
+    min-height: 8rem;
+  }
+  html.js .orchard .win.is-open {
+    display: flex;
+    animation: orchard-pop 0.16s ease-out;
+  }
+  @keyframes orchard-pop {
+    from {
+      transform: scale(0.96);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html.js .orchard .win.is-open {
+      animation: none;
+    }
+  }
+  html.js .orchard .win.is-maximized {
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 0;
+  }
+  html.js .orchard .win:not(.is-active) {
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.2),
+      0 8px 24px rgba(20, 10, 60, 0.25);
+  }
+
+  .orchard .desk-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 92px;
+    padding: 6px 4px;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+  }
+  .orchard .desk-icon.is-selected,
+  .orchard .desk-icon:focus-visible {
+    background: rgba(255, 255, 255, 0.18);
+    outline: none;
+  }
+  .orchard .desk-icon.is-selected span {
+    background: var(--accent);
+    border-radius: 4px;
+    padding: 0 4px;
+    text-shadow: none;
+  }
+
+  /* ---------- Window chrome ---------- */
+  .orchard .titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 12px;
+    background: linear-gradient(#f6f6f8, #e9e9ee);
+    border-bottom: 1px solid #d6d6dc;
+    user-select: none;
+    touch-action: none;
+  }
+  .orchard .win:not(.is-active) .titlebar {
+    background: #f6f6f8;
+  }
+  .orchard .titlebar svg {
+    display: none;
+  }
+  .orchard .titlebar h2 {
+    margin: 0;
+    padding: 0 70px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3a3a3c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .orchard .win:not(.is-active) .titlebar h2 {
+    color: #9a9aa0;
+  }
+  .orchard .controls {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+  }
+  html:not(.js) .orchard .controls {
+    display: none;
+  }
+  .orchard .ctl {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 50%;
+    border: 0.5px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+  /* Bigger hit area for fingers. */
+  .orchard .ctl::after {
+    content: '';
+    position: absolute;
+    inset: -6px -3px;
+  }
+  .orchard .ctl-close {
+    background: #ff5f57;
+  }
+  .orchard .ctl-min {
+    background: #febc2e;
+  }
+  .orchard .ctl-max {
+    background: #28c840;
+  }
+  .orchard .win:not(.is-active) .ctl {
+    background: #d6d6da;
+  }
+  .orchard .controls:hover .ctl::before {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font: bold 9px/1 system-ui, sans-serif;
+    color: rgba(0, 0, 0, 0.55);
+  }
+  .orchard .controls:hover .ctl-close::before {
+    content: '×';
+  }
+  .orchard .controls:hover .ctl-min::before {
+    content: '–';
+  }
+  .orchard .controls:hover .ctl-max::before {
+    content: '+';
+  }
+  @media (max-width: 720px) {
+    .orchard .ctl-max {
+      display: none;
+    }
+  }
+  .orchard .win-body {
+    flex: 1;
+    min-height: 0;
+    padding: 18px 20px;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* ---------- Content inside windows ---------- */
+  .orchard .win-body h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .orchard .win-body p,
+  .orchard .win-body ul,
+  .orchard .win-body ol {
+    margin: 0;
+  }
+  .orchard .win-body ul,
+  .orchard .win-body ol {
+    list-style: none;
+    padding: 0;
+  }
+  .orchard .win-body a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .orchard .win-body a:hover {
+    text-decoration: underline;
+  }
+  .orchard .pc-about > * + *,
+  .orchard .pc-experience > * + *,
+  .orchard .pc-museum > * + *,
+  .orchard .pc-consulting > * + *,
+  .orchard .pc-contact > * + * {
+    margin-top: 12px;
+  }
+  .orchard .pc-lead {
+    font-size: 15px;
+  }
+  .orchard .pc-meta {
+    color: var(--muted);
+  }
+  .orchard .pc-facts {
+    display: grid;
+    gap: 6px;
+  }
+  .orchard .pc-facts li,
+  .orchard .pc-contact-list li {
+    display: flex;
+    gap: 12px;
+    padding: 8px 12px;
+    background: #f5f5f7;
+    border-radius: 8px;
+  }
+  .orchard .pc-contact-list {
+    display: grid;
+    gap: 6px;
+  }
+  .orchard .pc-facts span,
+  .orchard .pc-contact-list span {
+    min-width: 6.5em;
+    color: var(--muted);
+  }
+  .orchard .pc-role {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .orchard .pc-role-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 1em;
+  }
+  .orchard .pc-role ul,
+  .orchard .pc-bullets {
+    list-style: disc !important;
+    padding-left: 18px !important;
+    margin-top: 4px !important;
+  }
+  .orchard .pc-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 12px;
+  }
+  .orchard .pc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: #f5f5f7;
+    border-radius: 12px;
+  }
+  .orchard .pc-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .orchard .pc-status {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .orchard .pc-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: auto;
+  }
+  .orchard .pc-tag {
+    font-size: 11.5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .orchard .pc-cert {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .orchard .pc-group + .pc-group {
+    margin-top: 14px;
+  }
+  .orchard .pc-group h3 {
+    margin-bottom: 6px;
+  }
+  .orchard .pc-links {
+    display: flex;
+    gap: 14px;
+  }
+  .orchard .pc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
+  .orchard .pc-btn {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 7px;
+    border: 0.5px solid rgba(0, 0, 0, 0.18);
+    background: #fff;
+    color: var(--text) !important;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    text-decoration: none !important;
+  }
+  .orchard .pc-primary {
+    background: linear-gradient(#3b8cff, #0a6cf0);
+    color: #fff !important;
+    border-color: #0a5fd6;
+  }
+  .orchard .pc-form {
+    display: grid;
+    gap: 10px;
+  }
+  .orchard .pc-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 10px;
+  }
+  .orchard .pc-field {
+    display: grid;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .orchard .pc-field input,
+  .orchard .pc-field select,
+  .orchard .pc-field textarea {
+    font-size: 14px;
+    color: var(--text);
+    padding: 6px 9px;
+    border: 1px solid #d2d2d7;
+    border-radius: 7px;
+    background: #fff;
+  }
+  .orchard .pc-field :focus {
+    outline: 3px solid rgba(10, 108, 240, 0.35);
+    border-color: var(--accent);
+  }
+  .orchard .pc-field textarea {
+    resize: vertical;
+  }
+  .orchard .pc-trap {
+    position: absolute;
+    left: -9999px;
+  }
+
+  /* ---------- Dock ---------- */
+  html.js .orchard .dock {
+    display: block;
+    position: fixed;
+    left: 50%;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 1000;
+    max-width: calc(100vw - 16px);
+    padding: 6px 8px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: saturate(1.6) blur(20px);
+    -webkit-backdrop-filter: saturate(1.6) blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+  .orchard .dock ul {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .orchard .dock a {
+    position: relative;
+    display: block;
+    padding-bottom: 6px;
+  }
+  .orchard .tile {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    box-shadow:
+      inset 0 0 0 0.5px rgba(0, 0, 0, 0.15),
+      0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+    transform-origin: bottom center;
+  }
+  .orchard .tile svg {
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+  }
+  .orchard .dock a:hover .tile,
+  .orchard .dock a:focus-visible .tile {
+    transform: scale(1.22) translateY(-4px);
+  }
+  .orchard .dock a:focus-visible {
+    outline: none;
+  }
+  .orchard .dock a::before {
+    content: attr(data-label);
+    position: absolute;
+    bottom: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(40, 40, 46, 0.85);
+    color: #fff;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+  }
+  .orchard .dock a:hover::before,
+  .orchard .dock a:focus-visible::before {
+    opacity: 1;
+  }
+  .orchard .dock a.is-running::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: rgba(30, 30, 30, 0.8);
+  }
+  .orchard .dock-sep {
+    align-self: stretch;
+    width: 1px;
+    margin: 4px 2px 10px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  @media (max-width: 720px) {
+    .orchard .menus,
+    .orchard .mb-term {
+      display: none;
+    }
+    html.js .orchard .icons {
+      top: 12px;
+      right: auto;
+      left: 12px;
+    }
+    html.js .orchard .icons ul {
+      flex-direction: row;
+    }
+    html.js .orchard .looks {
+      display: none;
+    }
+    .orchard .tile {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+    }
+    .orchard .dock a:hover .tile {
+      transform: none;
+    }
+    .orchard .dock a::before {
+      display: none;
+    }
+    html.js .orchard .desktop {
+      bottom: 70px;
+    }
+  }
+</style>

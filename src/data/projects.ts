@@ -50,7 +50,7 @@ export const projects: Project[] = [
   {
     name: 'JamesOS (this site)',
     summary:
-      'This website: a personal site styled as a retro desktop operating system, with draggable windows, a taskbar and a Start menu. Static Astro site with a hand-written window manager, deployed to GitHub Pages.',
+      'This website: a personal site styled as a retro command-line OS that you can type into or click through, with easter eggs and a small arcade game. The same content is also available as a modern site and as early-2000s and Mac-style desktops. Static Astro site, deployed to GitHub Pages.',
     status: 'complete',
     tags: ['Astro', 'TypeScript', 'CSS'],
     repo: 'https://github.com/jamesctippets-ui/personal_site',

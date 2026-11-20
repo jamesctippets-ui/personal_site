@@ -1,0 +1,26 @@
+---
+// "View this site as: Terminal · Modern · 2000 · Mac" links, shown on each alternate look.
+import { looks } from '@/components/plain/sections';
+import { withBase } from '@/utils';
+
+interface Props {
+  current: (typeof looks)[number]['id'];
+  label?: string;
+}
+const { current, label = 'View as' } = Astro.props;
+---
+
+<nav class="looks" aria-label="Site style">
+  <span class="looks-label">{label}</span>
+  {
+    looks.map((l) =>
+      l.id === current ? (
+        <span class="looks-current" aria-current="page">
+          {l.label}
+        </span>
+      ) : (
+        <a href={withBase(l.path)}>{l.label}</a>
+      ),
+    )
+  }
+</nav>

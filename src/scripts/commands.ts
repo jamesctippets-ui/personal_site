@@ -31,6 +31,8 @@ export const BUILTIN_COMMANDS = [
   'linkedin',
   'email',
   'print',
+  'play',
+  'modern',
   'exit',
 ] as const;
 
@@ -66,6 +68,15 @@ export const ALIASES: Record<string, string> = {
   volunteer: 'museum',
   inquiry: 'consulting',
   form: 'consulting',
+  game: 'play',
+  games: 'play',
+  arcade: 'play',
+  invaders: 'play',
+  bugswat: 'play',
+  gui: 'modern',
+  simple: 'modern',
+  easy: 'modern',
+  website: 'modern',
 };
 
 /** Fake files shown by DIR. Opening one runs its command. */
@@ -85,6 +96,7 @@ export const FILES: FileEntry[] = [
   ...(references.length ? [{ name: 'REFS.TXT', command: 'references' }] : []),
   ...(profile.consulting.open ? [{ name: 'HIRE_ME.TXT', command: 'consulting' }] : []),
   { name: 'CONTACT.TXT', command: 'contact' },
+  { name: 'BUGSWAT.EXE', command: 'play' },
   { name: 'HELP.TXT', command: 'help' },
 ];
 
@@ -110,6 +122,8 @@ export function helpRows(): HelpRow[] {
       ? [{ name: 'CONSULTING', description: 'Hire me for IT consulting (inquiry form)', run: 'consulting' }]
       : []),
     { name: 'CONTACT', description: 'Email and links', run: 'contact' },
+    { name: 'MODERN', description: 'Switch to the regular, modern website', run: 'modern' },
+    { name: 'PLAY', description: 'Play BUG SWAT, a tiny arcade game', run: 'play' },
     { name: 'DIR', description: 'List files', run: 'dir' },
     { name: 'TYPE <file>', description: 'Open a file, e.g. TYPE ABOUT.TXT' },
     { name: 'COLOR', description: 'Switch phosphor: green, amber, white', run: 'color' },

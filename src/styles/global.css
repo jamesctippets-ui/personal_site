@@ -177,3 +177,85 @@ ul {
 * {
   scrollbar-color: var(--dim) var(--bg);
 }
+
+/* ---------- BUG SWAT (PLAY command, src/scripts/game.ts) ---------- */
+.game {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  padding: 0.5em 0.75em calc(0.5em + env(safe-area-inset-bottom));
+  background: var(--bg);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.game-hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2em 1.2em;
+  border-bottom: 3px double var(--fg);
+  padding-bottom: 0.3em;
+}
+.game-quit {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: var(--bright);
+  cursor: pointer;
+  padding: 0 0.2em;
+}
+.game-quit:hover,
+.game-quit:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+  text-shadow: none;
+  outline: none;
+}
+.game-stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+.game-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border: 1px dashed var(--dim);
+  box-shadow: 0 0 18px var(--glow);
+}
+.game-help {
+  text-align: center;
+}
+.game-pad {
+  display: none;
+  gap: 0.5em;
+}
+.game-pad button {
+  flex: 1;
+  min-height: 3.2em;
+  border: 2px solid var(--fg);
+  background: transparent;
+  color: var(--fg);
+  font-size: 1.1em;
+  touch-action: none;
+  cursor: pointer;
+}
+.game-pad button:active {
+  background: var(--fg);
+  color: var(--bg);
+}
+.game-pad .fire {
+  flex: 1.6;
+}
+@media (hover: none), (max-width: 640px) {
+  .game-pad {
+    display: flex;
+  }
+  .game-help {
+    display: none;
+  }
+}

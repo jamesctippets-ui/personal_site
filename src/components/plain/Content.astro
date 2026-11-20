@@ -1,0 +1,289 @@
+---
+// The body of one section for the alternate looks (/modern, /2000, /mac).
+// Plain semantic HTML with `pc-` class names; each page styles them its own way.
+import { profile } from '@/data/profile';
+import { projects } from '@/data/projects';
+import { skills } from '@/data/skills';
+import { homelab } from '@/data/homelab';
+import { spotlight } from '@/data/spotlight';
+import { resume } from '@/data/resume';
+import { inquiry } from '@/data/inquiry';
+import { withBase } from '@/utils';
+import type { SectionId } from '@/components/plain/sections';
+
+interface Props {
+  section: SectionId;
+}
+const { section } = Astro.props;
+const short = (href: string) => href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+const live = Boolean(inquiry.web3formsKey);
+const statusLabel = { active: 'In progress', complete: 'Complete', paused: 'Paused' } as const;
+---
+
+{
+  section === 'about' && (
+    <div class="pc-about">
+      <p class="pc-lead">
+        <strong>{profile.name}</strong>, {profile.title} · {profile.location}
+      </p>
+      {profile.about.map((p) => <p>{p}</p>)}
+      <ul class="pc-facts">
+        <li>
+          <span>Now</span> {resume.experience[0].title}, {resume.experience[0].organization}
+        </li>
+        {resume.certifications.length > 0 && (
+          <li>
+            <span>Certified</span> {resume.certifications.map((c) => c.name).join(', ')}
+          </li>
+        )}
+        <li>
+          <span>Based in</span> {profile.location}
+        </li>
+      </ul>
+    </div>
+  )
+}
+
+{
+  section === 'experience' && (
+    <div class="pc-experience">
+      <p class="pc-lead">{resume.summary}</p>
+      <ol class="pc-timeline">
+        {resume.experience.map((role) => (
+          <li class="pc-role">
+            <div class="pc-role-head">
+              <h3>{role.title}</h3>
+              <span class="pc-meta">
+                {role.start ? `${role.start} – ${role.end}` : role.end}
+              </span>
+            </div>
+            <p class="pc-meta">
+              {role.organization}
+              {role.location && ` · ${role.location}`}
+            </p>
+            <ul>
+              {role.highlights.map((h) => (
+                <li>{h}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      {resume.education.length > 0 && (
+        <>
+          <h3 class="pc-sub">Education</h3>
+          <ul class="pc-plain">
+            {resume.education.map((e) => (
+              <li>
+                {e.credential}, {e.institution} ({e.year})
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      <p class="pc-actions">
+        <a class="pc-btn" href={withBase('resume/')}>
+          Printable resume
+        </a>
+        {profile.resumePdf && (
+          <a class="pc-btn" href={withBase(profile.resumePdf)} download>
+            Download PDF
+          </a>
+        )}
+      </p>
+    </div>
+  )
+}
+
+{
+  section === 'projects' && (
+    <ul class="pc-cards">
+      {projects.map((p) => (
+        <li class:list={['pc-card', { 'pc-featured': p.featured }]}>
+          <div class="pc-card-head">
+            <h3>{p.name}</h3>
+            <span class:list={['pc-status', `pc-${p.status}`]}>{statusLabel[p.status]}</span>
+          </div>
+          <p>{p.summary}</p>
+          <ul class="pc-tags">
+            {p.tags.map((t) => (
+              <li class="pc-tag">{t}</li>
+            ))}
+          </ul>
+          {(p.url || p.repo) && (
+            <p class="pc-links">
+              {p.url && (
+                <a href={p.url} target="_blank" rel="noopener">
+                  Live site
+                </a>
+              )}
+              {p.repo && (
+                <a href={p.repo} target="_blank" rel="noopener">
+                  Source code
+                </a>
+              )}
+            </p>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+{
+  section === 'skills' && (
+    <div class="pc-skills">
+      {resume.certifications.length > 0 && (
+        <div class="pc-group">
+          <h3>Certifications</h3>
+          <ul class="pc-tags">
+            {resume.certifications.map((c) => (
+              <li class="pc-tag pc-cert">{c.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {skills.map((g) => (
+        <div class="pc-group">
+          <h3>{g.category}</h3>
+          <ul class="pc-tags">
+            {g.items.map((i) => (
+              <li class="pc-tag">{i}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+{
+  section === 'lab' && (
+    <ul class="pc-cards">
+      {homelab.map((item) => (
+        <li class="pc-card">
+          <h3>{item.name}</h3>
+          <p>{item.summary}</p>
+          <ul class="pc-bullets">
+            {item.details.map((d) => (
+              <li>{d}</li>
+            ))}
+          </ul>
+          <ul class="pc-tags">
+            {item.tags.map((t) => (
+              <li class="pc-tag">{t}</li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+{
+  section === 'museum' && (
+    <div class="pc-museum">
+      <p class="pc-lead">
+        <strong>{spotlight.role}</strong> · {spotlight.organization}
+      </p>
+      <p>{spotlight.summary}</p>
+      <ul class="pc-cards pc-cards-small">
+        {spotlight.work.map((w) => (
+          <li class="pc-card">
+            <h3>{w.title}</h3>
+            <p>{w.detail}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+{
+  section === 'consulting' && (
+    <div class="pc-consulting">
+      <p class="pc-lead">{profile.consulting.blurb}</p>
+      <ul class="pc-bullets">
+        {profile.consulting.focus.map((f) => (
+          <li>{f}</li>
+        ))}
+      </ul>
+      <form
+        class="pc-form"
+        data-inquiry
+        method="POST"
+        action={live ? 'https://api.web3forms.com/submit' : `mailto:${profile.email}`}
+        enctype={live ? undefined : 'text/plain'}
+      >
+        {live && <input type="hidden" name="access_key" value={inquiry.web3formsKey} />}
+        <div class="pc-row">
+          <label class="pc-field">
+            <span>Name</span>
+            <input name="name" required autocomplete="name" />
+          </label>
+          <label class="pc-field">
+            <span>Email</span>
+            <input name="email" type="email" required autocomplete="email" />
+          </label>
+        </div>
+        <div class="pc-row">
+          <label class="pc-field">
+            <span>Organization (optional)</span>
+            <input name="organization" autocomplete="organization" />
+          </label>
+          <label class="pc-field">
+            <span>Service</span>
+            <select name="service">
+              {inquiry.services.map((s) => (
+                <option>{s}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <label class="pc-field">
+          <span>Timeline</span>
+          <input name="timeline" placeholder="e.g. this week, next month" />
+        </label>
+        <label class="pc-field">
+          <span>Message</span>
+          <textarea name="message" rows="5" required placeholder="What do you need help with?" />
+        </label>
+        <input type="checkbox" name="botcheck" class="pc-trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="pc-actions">
+          <button type="submit" class="pc-btn pc-primary">
+            Send inquiry
+          </button>
+          <span class="status pc-meta" role="status" />
+        </div>
+      </form>
+    </div>
+  )
+}
+
+{
+  section === 'contact' && (
+    <div class="pc-contact">
+      <p>The fastest way to reach me is email. I'm also on LinkedIn and GitHub.</p>
+      <ul class="pc-contact-list">
+        {profile.email && (
+          <li>
+            <span>Email</span>
+            <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          </li>
+        )}
+        {profile.links.map((l) => (
+          <li>
+            <span>{l.label}</span>
+            <a href={l.href} target="_blank" rel="me noopener">
+              {short(l.href)}
+            </a>
+          </li>
+        ))}
+        <li>
+          <span>Resume</span>
+          <a href={withBase('resume/')}>Printable version</a>
+        </li>
+      </ul>
+    </div>
+  )
+}

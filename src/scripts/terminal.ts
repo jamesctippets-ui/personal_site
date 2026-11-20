@@ -119,6 +119,8 @@ const EGGS = [
   'hello',
   '42',
   'konami',
+  '2000',
+  'apple',
 ] as const;
 const found = new Set<string>();
 
@@ -168,6 +170,28 @@ function matrixRain(seconds = 3) {
 
 function egg(id: (typeof EGGS)[number]) {
   found.add(id);
+}
+
+/** Print a loading line, then switch to another look of the site. */
+function goTo(path: string, message: string) {
+  line(message, 'dim');
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  window.setTimeout(() => (window.location.href = `${base}/${path}`), 700);
+}
+
+async function play() {
+  line('Loading BUGSWAT.EXE...', 'dim');
+  input.blur();
+  const { playBugSwat } = await import('@/scripts/game');
+  const r = await playBugSwat();
+  line(
+    r.score
+      ? `BUG SWAT closed. Score ${r.score} (wave ${r.wave}). High score ${r.best}.`
+      : `BUG SWAT closed. High score ${r.best}.`,
+  );
+  line(fragment(cmdLink('play', 'Play again'), '  ', cmdLink('help', 'HELP')), 'dim');
+  output.scrollTop = output.scrollHeight;
+  if (window.matchMedia('(hover: hover)').matches) input.focus({ preventScroll: true });
 }
 
 function easterEgg(raw: string): boolean {
@@ -238,9 +262,19 @@ function easterEgg(raw: string): boolean {
     line('Yes, that is the answer. Now what was the question?');
     return true;
   }
+  if (s === '2000' || s === 'y2k') {
+    egg('2000');
+    goTo('2000/', 'Rewinding to the year 2000... starting JamesOS Horizon.');
+    return true;
+  }
+  if (s === 'apple' || s === 'mac' || s === 'macos' || s === 'orchard') {
+    egg('apple');
+    goTo('mac/', 'Polishing the pixels... starting JamesOS Orchard.');
+    return true;
+  }
   if (s === 'secrets' || s === 'secret' || s === 'eggs' || s === 'easter eggs') {
     line(`There are ${EGGS.length} secrets hidden in JamesOS. You have found ${found.size}.`);
-    line('Hint: try things you would type on a help desk, a coffee break, or an old adventure game.', 'dim');
+    line('Hint: try things you would type on a help desk, on a coffee break or in an old adventure game. A year and a fruit might take you somewhere, too.', 'dim');
     return true;
   }
   return false;
@@ -359,6 +393,12 @@ function exec(raw: string): void {
       window.location.href = `${base}/resume`;
       return;
     }
+    case 'play':
+      void play();
+      return;
+    case 'modern':
+      goTo('modern/', 'Opening the modern version of this site...');
+      return;
     case 'exit':
       shutdown();
       return;
@@ -419,6 +459,11 @@ function bootLines(): string[] {
 function banner() {
   line(fragment(Object.assign(document.createElement('span'), { className: 'inv', textContent: ' JamesOS 1.0 ' }), ` ${profile.name}, ${profile.title}`));
   line(fragment('Type a command or click one. ', cmdLink('help', 'HELP'), ' lists everything.'), 'dim');
+  const modern = Object.assign(document.createElement('a'), {
+    href: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/modern/`,
+    textContent: 'modern site',
+  });
+  line(fragment('Prefer a regular website? Open the ', modern, ' or type MODERN.'), 'dim');
 }
 
 function boot(force = false) {

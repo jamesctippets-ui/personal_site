@@ -1,0 +1,738 @@
+---
+// "JamesOS Horizon": an early-2000s desktop look (glossy blue taskbar, rolling
+// hills, rounded blue title bars). All art and wording are original. Opened by
+// typing 2000 in the terminal. Windows are driven by src/scripts/desk.ts.
+import Plain from '@/layouts/Plain.astro';
+import DeskWindow from '@/components/desk/DeskWindow.astro';
+import Glyph from '@/components/plain/Glyph.astro';
+import Content from '@/components/plain/Content.astro';
+import LookSwitcher from '@/components/plain/LookSwitcher.astro';
+import { sections } from '@/components/plain/sections';
+import { profile } from '@/data/profile';
+import { withBase } from '@/utils';
+---
+
+<Plain title="JamesOS Horizon" themeColor="#245edb" bodyClass="y2k">
+  <div class="screen">
+    <div id="desktop" class="desktop" data-gutter="120" data-first="about">
+      <h1 class="sr-only">{profile.name}, {profile.title}</h1>
+      <nav class="icons" aria-label="Desktop">
+        <ul>
+          {
+            sections.map((s) => (
+              <li>
+                <a class="desk-icon" href={`#${s.id}`} data-open={s.id}>
+                  <Glyph name={s.glyph} size={36} />
+                  <span>{s.label}</span>
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a class="desk-icon" href={withBase('resume/')}>
+              <Glyph name="resume" size={36} />
+              <span>Resume.doc</span>
+            </a>
+          </li>
+          <li>
+            <a class="desk-icon" href={withBase('')}>
+              <Glyph name="terminal" size={36} />
+              <span>Terminal</span>
+            </a>
+          </li>
+          <li>
+            <a class="desk-icon" href={withBase('modern/')}>
+              <Glyph name="globe" size={36} />
+              <span>Modern site</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      {
+        sections.map((s) => (
+          <DeskWindow id={s.id} title={s.title} short={s.label} glyph={s.glyph} width={s.width} height={s.height}>
+            <Content section={s.id} />
+          </DeskWindow>
+        ))
+      }
+      <LookSwitcher current="2000" label="Other looks:" />
+    </div>
+
+    <div id="start-menu" class="start-menu" hidden>
+      <div class="sm-head">
+        <span class="avatar"><Glyph name="about" size={34} /></span>
+        <strong>{profile.name}</strong>
+      </div>
+      <div class="sm-cols">
+        <ul class="sm-left" aria-label="Sections">
+          {
+            sections.map((s) => (
+              <li>
+                <a href={`#${s.id}`} data-open={s.id}>
+                  <Glyph name={s.glyph} size={24} />
+                  <span>{s.title}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <ul class="sm-right" aria-label="Links">
+          <li><a href={withBase('resume/')}>Printable resume</a></li>
+          {profile.email && <li><a href={`mailto:${profile.email}`}>Email me</a></li>}
+          {
+            profile.links.map((l) => (
+              <li>
+                <a href={l.href} target="_blank" rel="me noopener">
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+          <li class="sep" role="separator"></li>
+          <li><a href={withBase('modern/')}>Modern site</a></li>
+          <li><a href={withBase('mac/')}>Mac look</a></li>
+        </ul>
+      </div>
+      <div class="sm-foot">
+        <a href={withBase('')} class="power">
+          <span class="power-dot" aria-hidden="true"></span> Back to the terminal
+        </a>
+      </div>
+    </div>
+
+    <footer class="taskbar">
+      <button id="start-button" class="start" type="button" aria-expanded="false" aria-controls="start-menu">
+        <span class="start-badge" aria-hidden="true">J</span> Start
+      </button>
+      <div id="tasks" class="tasks" aria-label="Open windows"></div>
+      <div class="tray">
+        <a class="tray-term" href={withBase('')} title="Back to the terminal" aria-label="Back to the terminal">&gt;_</a>
+        <span id="clock" class="clock"></span>
+      </div>
+    </footer>
+  </div>
+</Plain>
+
+<script>
+  import '@/scripts/desk';
+  import '@/scripts/inquiry';
+</script>
+
+<style is:global>
+  body.y2k {
+    --blue: #1f5fd6;
+    --blue-dark: #0b3fa8;
+    --face: #ece9d8;
+    --line: #a8a698;
+    --text: #1b1b1b;
+    --muted: #5a5a52;
+    font-family: Tahoma, Verdana, 'DejaVu Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: #3a6fd6;
+  }
+
+  /* ---------- Wallpaper: original sky and rolling hills, all CSS ---------- */
+  .y2k .screen {
+    min-height: 100vh;
+    background:
+      radial-gradient(120% 60% at 30% 108%, #3f9b2f 0 45%, transparent 46%),
+      radial-gradient(90% 50% at 85% 112%, #5cb83a 0 48%, transparent 49%),
+      radial-gradient(70% 22% at 70% 18%, rgba(255, 255, 255, 0.75), transparent 70%),
+      radial-gradient(50% 14% at 22% 30%, rgba(255, 255, 255, 0.6), transparent 70%),
+      linear-gradient(#2a6be0 0%, #5d9cf0 45%, #a9d0f7 70%, #c8e3f9 100%);
+    background-attachment: fixed;
+  }
+
+  /* ---------- No JS: icons as a nav, windows as a stacked page ---------- */
+  .y2k .desktop {
+    padding: 1rem;
+  }
+  .y2k .icons ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+  .y2k .win {
+    background: var(--face);
+    border: 3px solid var(--blue);
+    border-radius: 8px 8px 0 0;
+    margin: 0 auto 1rem;
+    max-width: 46rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.35);
+  }
+  .y2k .taskbar,
+  .y2k .start-menu {
+    display: none;
+  }
+  .y2k .looks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+  }
+  .y2k .looks a {
+    color: #fff;
+  }
+
+  /* ---------- Desktop mode (JS) ---------- */
+  html.js .y2k .screen {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  html.js .y2k .desktop {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  html.js .y2k .icons {
+    position: absolute;
+    inset: 8px auto 8px 8px;
+  }
+  html.js .y2k .icons ul {
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 100%;
+    align-content: flex-start;
+  }
+  html.js .y2k .looks {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+  }
+  html.js .y2k .win {
+    position: absolute;
+    display: none;
+    margin: 0;
+    max-width: none;
+    min-width: 16rem;
+    min-height: 8rem;
+  }
+  html.js .y2k .win.is-open {
+    display: flex;
+  }
+  html.js .y2k .win.is-maximized {
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 0;
+  }
+
+  .y2k .desk-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 96px;
+    padding: 6px 4px;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 1px 1px 2px #000;
+    border: 1px dotted transparent;
+    border-radius: 3px;
+  }
+  .y2k .desk-icon span {
+    padding: 0 3px;
+    line-height: 1.25;
+  }
+  .y2k .desk-icon:focus-visible,
+  .y2k .desk-icon.is-selected {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+  .y2k .desk-icon.is-selected span {
+    background: #316ac5;
+    text-shadow: none;
+  }
+
+  /* ---------- Window chrome ---------- */
+  .y2k .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 5px 4px 7px;
+    min-height: 30px;
+    color: #fff;
+    background: linear-gradient(#3d8cf6 0%, #1f63e0 12%, #1957d6 60%, #1048c4 90%, #0d3fae 100%);
+    border-radius: 5px 5px 0 0;
+    user-select: none;
+    touch-action: none;
+  }
+  .y2k .win:not(.is-active) .titlebar {
+    background: linear-gradient(#a6bdf0, #7d9be0);
+  }
+  html.js .y2k .win:not(.is-active) {
+    border-color: #7d9be0;
+  }
+  .y2k .titlebar h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font: bold 13px 'Trebuchet MS', Tahoma, sans-serif;
+    text-shadow: 1px 1px 1px #0a246a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .y2k .titlebar svg {
+    flex: none;
+  }
+  .y2k .controls {
+    order: 3;
+    display: flex;
+    gap: 2px;
+  }
+  html:not(.js) .y2k .controls {
+    display: none;
+  }
+  .y2k .ctl-min {
+    order: 1;
+  }
+  .y2k .ctl-max {
+    order: 2;
+  }
+  .y2k .ctl-close {
+    order: 3;
+    margin-left: 2px;
+  }
+  .y2k .ctl {
+    position: relative;
+    width: 21px;
+    height: 21px;
+    padding: 0;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    background: linear-gradient(135deg, #5a95f5, #2160dd);
+    cursor: pointer;
+  }
+  .y2k .ctl-close {
+    background: linear-gradient(135deg, #f08a64, #d1401e);
+  }
+  .y2k .ctl:hover {
+    filter: brightness(1.15);
+  }
+  .y2k .ctl::before,
+  .y2k .ctl::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    background: #fff;
+  }
+  .y2k .ctl-min::before {
+    width: 8px;
+    height: 3px;
+    top: 9px;
+  }
+  .y2k .ctl-min::after,
+  .y2k .ctl-max::after {
+    display: none;
+  }
+  .y2k .ctl-max::before {
+    width: 9px;
+    height: 9px;
+    background: none;
+    border: 2px solid #fff;
+    border-top-width: 3px;
+  }
+  .y2k .ctl-close::before,
+  .y2k .ctl-close::after {
+    width: 11px;
+    height: 2px;
+    transform: rotate(45deg);
+  }
+  .y2k .ctl-close::after {
+    transform: rotate(-45deg);
+  }
+  @media (max-width: 720px) {
+    .y2k .ctl-max {
+      display: none;
+    }
+  }
+  .y2k .win-body {
+    flex: 1;
+    min-height: 0;
+    margin: 0 3px 3px;
+    padding: 14px 16px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: #fff;
+    border: 1px solid #7f9db9;
+    line-height: 1.5;
+  }
+
+  /* ---------- Content inside windows ---------- */
+  .y2k .win-body h3 {
+    margin: 0;
+    font-size: 13px;
+    color: #0b3fa8;
+  }
+  .y2k .win-body p,
+  .y2k .win-body ul,
+  .y2k .win-body ol {
+    margin: 0;
+  }
+  .y2k .win-body ul,
+  .y2k .win-body ol {
+    list-style: none;
+    padding: 0;
+  }
+  .y2k .win-body > * + *,
+  .y2k .pc-about > * + *,
+  .y2k .pc-experience > * + *,
+  .y2k .pc-museum > * + *,
+  .y2k .pc-consulting > * + *,
+  .y2k .pc-contact > * + * {
+    margin-top: 10px;
+  }
+  .y2k .pc-lead {
+    font-size: 14px;
+  }
+  .y2k .pc-meta {
+    color: var(--muted);
+  }
+  .y2k .pc-facts li span,
+  .y2k .pc-contact-list span {
+    display: inline-block;
+    min-width: 6.5em;
+    font-weight: bold;
+  }
+  .y2k .pc-role {
+    padding: 8px 0;
+    border-bottom: 1px solid #e3e1d4;
+  }
+  .y2k .pc-role-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 1em;
+  }
+  .y2k .pc-role ul,
+  .y2k .pc-bullets {
+    list-style: square !important;
+    padding-left: 18px !important;
+    margin-top: 4px !important;
+  }
+  .y2k .pc-cards {
+    display: grid;
+    gap: 10px;
+  }
+  .y2k .pc-card {
+    border: 1px solid #d0d0bf;
+    border-radius: 4px;
+    padding: 10px 12px;
+    background: linear-gradient(#fff, #f6f5ee);
+  }
+  .y2k .pc-card > * + * {
+    margin-top: 6px;
+  }
+  .y2k .pc-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .y2k .pc-status {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .y2k .pc-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .y2k .pc-tag {
+    font-size: 11px;
+    padding: 1px 6px;
+    border: 1px solid #b6c7e8;
+    border-radius: 2px;
+    background: #eef3fd;
+  }
+  .y2k .pc-cert {
+    background: #fff4cc;
+    border-color: #e1c25e;
+    font-weight: bold;
+  }
+  .y2k .pc-group + .pc-group {
+    margin-top: 12px;
+  }
+  .y2k .pc-group h3 {
+    margin-bottom: 4px;
+  }
+  .y2k .pc-links {
+    display: flex;
+    gap: 12px;
+  }
+  .y2k .win-body a {
+    color: #0b3fa8;
+  }
+  .y2k .pc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
+  .y2k .pc-btn {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid #003c74;
+    border-radius: 3px;
+    background: linear-gradient(#fff, #e3e2da 85%, #d6d4c8);
+    color: #000 !important;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .y2k .pc-btn:hover {
+    box-shadow: inset 0 0 0 2px #f8b636;
+  }
+  .y2k .pc-form {
+    display: grid;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid #d0d0bf;
+    border-radius: 4px;
+    background: var(--face);
+  }
+  .y2k .pc-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 8px;
+  }
+  .y2k .pc-field {
+    display: grid;
+    gap: 2px;
+  }
+  .y2k .pc-field input,
+  .y2k .pc-field select,
+  .y2k .pc-field textarea {
+    padding: 3px 4px;
+    border: 1px solid #7f9db9;
+    background: #fff;
+    font-size: 13px;
+  }
+  .y2k .pc-field textarea {
+    resize: vertical;
+  }
+  .y2k .pc-trap {
+    position: absolute;
+    left: -9999px;
+  }
+
+  /* ---------- Taskbar ---------- */
+  html.js .y2k .taskbar {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    height: calc(36px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: linear-gradient(#3e7cea 0%, #2a62d9 10%, #2458d0 50%, #2154ca 90%, #1a46b0 100%);
+    border-top: 1px solid #5d93f5;
+    position: relative;
+    z-index: 1000;
+  }
+  .y2k .start {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 18px 0 10px;
+    border: 0;
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(#5fbf5c 0%, #3a9b38 45%, #2f8a2d 90%, #2a7a28 100%);
+    color: #fff;
+    font: italic bold 17px 'Trebuchet MS', Tahoma, sans-serif;
+    text-shadow: 1px 1px 2px #0d3d0c;
+    cursor: pointer;
+    box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.25);
+  }
+  .y2k .start:hover,
+  .y2k .start[aria-expanded='true'] {
+    filter: brightness(1.1);
+  }
+  .y2k .start-badge {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff 0, #ffe066 30%, #f0a500 100%);
+    color: #7a4b00;
+    font: normal bold 13px Tahoma, sans-serif;
+    text-shadow: none;
+  }
+  .y2k .tasks {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .y2k .task {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 1 160px;
+    min-width: 44px;
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid #1b4ab8;
+    border-radius: 3px;
+    background: linear-gradient(#5a91f0, #3c74e2);
+    color: #fff;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .y2k .task span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .y2k .task[aria-pressed='true'] {
+    background: linear-gradient(#1c4fb8, #2a5fcc);
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.45);
+  }
+  .y2k .tray {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    background: linear-gradient(#1ba0f0, #128ad8 50%, #0f78c6);
+    border-left: 1px solid #0c5ea0;
+    color: #fff;
+  }
+  .y2k .tray-term {
+    color: #fff;
+    font-family: Consolas, monospace;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  /* ---------- Start menu ---------- */
+  html.js .y2k .start-menu:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    bottom: calc(36px + env(safe-area-inset-bottom));
+    z-index: 1001;
+    width: min(420px, 100vw);
+    border: 2px solid #1c56d6;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
+  }
+  .y2k .sm-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: linear-gradient(#3e86f2, #1d5ad8);
+    color: #fff;
+    font: bold 15px 'Trebuchet MS', Tahoma, sans-serif;
+    text-shadow: 1px 1px 2px #0a246a;
+  }
+  .y2k .avatar {
+    padding: 2px;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    background: #d9e7fb;
+  }
+  .y2k .sm-cols {
+    display: flex;
+  }
+  .y2k .sm-cols ul {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+  }
+  .y2k .sm-left {
+    flex: 1.2;
+  }
+  .y2k .sm-left a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .y2k .sm-right {
+    flex: 1;
+    background: #d3e5fa;
+    border-left: 1px solid #95bdee;
+  }
+  .y2k .sm-right a {
+    display: block;
+    padding: 5px 10px;
+    color: #0a246a;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  .y2k .sm-cols a:hover,
+  .y2k .sm-cols a:focus-visible {
+    background: #316ac5;
+    color: #fff;
+    outline: none;
+  }
+  .y2k .sep {
+    margin: 4px 10px;
+    border-top: 1px solid #95bdee;
+  }
+  .y2k .sm-foot {
+    display: flex;
+    justify-content: flex-end;
+    padding: 6px 10px;
+    background: linear-gradient(#3e86f2, #1d5ad8);
+  }
+  .y2k .power {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+  }
+  .y2k .power-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #f08a64, #d1401e);
+    border: 1px solid #fff;
+  }
+
+  @media (max-width: 720px) {
+    html.js .y2k .icons ul {
+      flex-direction: row;
+      height: auto;
+    }
+    html.js .y2k .looks {
+      display: none;
+    }
+    .y2k .desk-icon {
+      width: 84px;
+    }
+    .y2k .tray-term {
+      display: none;
+    }
+    .y2k .task span {
+      display: none;
+    }
+    .y2k .task {
+      flex: 0 0 auto;
+    }
+  }
+</style>
