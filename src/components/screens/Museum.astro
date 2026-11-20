@@ -1,0 +1,35 @@
+---
+import { spotlight } from '@/data/spotlight';
+---
+
+<section class="frame">
+  <h2 class="frame-title">SPOTLIGHT: {spotlight.organization.toUpperCase()}</h2>
+  <p class="bright">{spotlight.role}</p>
+  <p class="summary">{spotlight.summary}</p>
+  <ul>
+    {
+      spotlight.work.map((w) => (
+        <li>
+          <span class="inv">{w.title}</span>
+          <p class="detail">{w.detail}</p>
+        </li>
+      ))
+    }
+  </ul>
+  <hr class="rule" />
+  <p>
+    Need the same for your organization? <a class="cmd-link" href="#consulting" data-cmd="consulting">Hire me</a>.
+  </p>
+</section>
+
+<style>
+  .summary {
+    margin: 0.4em 0 0.8em;
+  }
+  li + li {
+    margin-top: 0.7em;
+  }
+  .detail {
+    margin-top: 0.2em;
+  }
+</style>

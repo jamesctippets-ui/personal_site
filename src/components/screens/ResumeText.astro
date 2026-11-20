@@ -1,0 +1,118 @@
+---
+// Terminal rendering of the resume (RESUME command). The printable, paper-style
+// version is src/components/ResumeDoc.astro on the /resume page.
+import { profile } from '@/data/profile';
+import { resume } from '@/data/resume';
+import { skills } from '@/data/skills';
+import { withBase } from '@/utils';
+---
+
+<p class="actions">
+  <a href={withBase('resume')}>[ Open printable resume ]</a>
+  {profile.resumePdf && <a href={withBase(profile.resumePdf)} download>[ Download PDF ]</a>}
+</p>
+
+<section class="frame">
+  <h2 class="frame-title">RESUME.DOC</h2>
+  <p class="bright">{profile.name.toUpperCase()} — {profile.title}</p>
+  <p class="dim">{profile.location}{profile.email && ` · ${profile.email}`}</p>
+  <hr class="rule" />
+  <p>{resume.summary}</p>
+
+  <h3 class="head"><span class="inv">EXPERIENCE</span></h3>
+  {
+    resume.experience.map((role) => (
+      <div class="entry">
+        <p class="bright">
+          {role.title} @ {role.organization}
+        </p>
+        <p class="dim">
+          {role.start ? `${role.start} – ${role.end}` : role.end}
+          {role.location && ` · ${role.location}`}
+        </p>
+        <ul>
+          {role.highlights.map((h) => (
+            <li class="bullet">{h}</li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+
+  <h3 class="head"><span class="inv">SKILLS</span></h3>
+  <dl>
+    {
+      skills.map((g) => (
+        <div class="skill">
+          <dt class="bright">{g.category}:</dt>
+          <dd>{g.items.join(', ')}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  {
+    resume.certifications.length > 0 && (
+      <>
+        <h3 class="head">
+          <span class="inv">CERTIFICATIONS</span>
+        </h3>
+        <ul>
+          {resume.certifications.map((c) => (
+            <li class="bullet">
+              {c.name}
+              {c.issuer && `, ${c.issuer}`}
+              {c.year && <span class="dim"> ({c.year})</span>}
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    resume.education.length > 0 && (
+      <>
+        <h3 class="head">
+          <span class="inv">EDUCATION</span>
+        </h3>
+        <ul>
+          {resume.education.map((e) => (
+            <li class="bullet">
+              {e.credential}, {e.institution} <span class="dim">({e.year})</span>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</section>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+  }
+  .head {
+    margin: 1em 0 0.4em;
+  }
+  .entry + .entry {
+    margin-top: 0.7em;
+  }
+  .bullet {
+    position: relative;
+    padding-left: 1.2em;
+  }
+  .bullet::before {
+    content: '-';
+    position: absolute;
+    left: 0.3em;
+    color: var(--dim);
+  }
+  .skill {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.6em;
+  }
+</style>

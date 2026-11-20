@@ -1,0 +1,54 @@
+---
+import { projects } from '@/data/projects';
+
+// Featured projects first, otherwise keep the order from projects.ts.
+const sorted = [...projects].sort(
+  (a, b) => Number(b.featured ?? false) - Number(a.featured ?? false),
+);
+const statusLabel = { active: 'IN PROGRESS', complete: 'COMPLETE', paused: 'PAUSED' };
+---
+
+<p class="dim">Directory of C:\JAMES\PROJECTS — {projects.length} item(s)</p>
+<ul>
+  {
+    sorted.map((project, i) => (
+      <li class="frame">
+        <h2 class="frame-title">
+          [{i + 1}] {project.name.toUpperCase()}
+        </h2>
+        <p>
+          Status: <span class:list={{ inv: project.status === 'active' }}>{statusLabel[project.status]}</span>
+          {project.featured && <span class="dim"> · featured</span>}
+        </p>
+        <p class="summary">{project.summary}</p>
+        <p class="dim">Tags: {project.tags.join(' · ')}</p>
+        {(project.url || project.repo) && (
+          <p class="links">
+            {project.url && (
+              <a href={project.url} target="_blank" rel="noopener">
+                [ Visit site ]
+              </a>
+            )}
+            {project.repo && (
+              <a href={project.repo} target="_blank" rel="noopener">
+                [ View source ]
+              </a>
+            )}
+          </p>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .summary {
+    margin: 0.4em 0;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+    margin-top: 0.3em;
+  }
+</style>

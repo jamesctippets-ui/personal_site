@@ -9,15 +9,5 @@ export interface Reference {
   url?: string;
 }
 
-export const references: Reference[] = [
-  {
-    quote: 'TODO: A short quote from a manager, colleague, or client.',
-    name: 'Reference Name',
-    role: 'Title, Company',
-  },
-  {
-    quote: 'TODO: A second quote that highlights a different strength.',
-    name: 'Reference Name',
-    role: 'Title, Company',
-  },
-];
+// Empty for now: no references yet, so the References window is hidden.
+export const references: Reference[] = [];

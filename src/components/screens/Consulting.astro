@@ -1,0 +1,171 @@
+---
+import { profile } from '@/data/profile';
+import { inquiry } from '@/data/inquiry';
+
+// No `id`s here: the terminal clones this markup, so labels wrap their inputs
+// and the submit handler (src/scripts/inquiry.ts) finds forms by data attribute.
+const live = Boolean(inquiry.web3formsKey);
+---
+
+<section class="frame">
+  <h2 class="frame-title">HIRE_ME.TXT</h2>
+  <p><span class="inv">OPEN TO INQUIRIES</span></p>
+  <p class="blurb">{profile.consulting.blurb}</p>
+  <p class="bright">Priority areas:</p>
+  <ol>
+    {
+      profile.consulting.focus.map((f, i) => (
+        <li>
+          <span class="dim">{i + 1}.</span> {f}
+        </li>
+      ))
+    }
+  </ol>
+  <p class="dim recent">
+    Recent work: <a class="cmd-link" href="#museum" data-cmd="museum">Fort Mill History Museum</a>
+  </p>
+</section>
+
+<section class="frame">
+  <h2 class="frame-title">INQUIRY.FRM</h2>
+  <form
+    class="inquiry"
+    data-inquiry
+    method="POST"
+    action={live ? 'https://api.web3forms.com/submit' : `mailto:${profile.email}`}
+    enctype={live ? undefined : 'text/plain'}
+  >
+    {live && <input type="hidden" name="access_key" value={inquiry.web3formsKey} />}
+    <label class="row">
+      <span>NAME......</span>
+      <input name="name" required autocomplete="name" />
+    </label>
+    <label class="row">
+      <span>EMAIL.....</span>
+      <input name="email" type="email" required autocomplete="email" />
+    </label>
+    <label class="row">
+      <span>ORG.......</span>
+      <input name="organization" autocomplete="organization" placeholder="optional" />
+    </label>
+    <label class="row">
+      <span>SERVICE...</span>
+      <select name="service">
+        {inquiry.services.map((s) => <option>{s}</option>)}
+      </select>
+    </label>
+    <label class="row">
+      <span>TIMELINE..</span>
+      <input name="timeline" placeholder="e.g. this week, next month" />
+    </label>
+    <label class="row stacked">
+      <span>MESSAGE...</span>
+      <textarea name="message" rows="5" required placeholder="What do you need help with?"></textarea>
+    </label>
+    <!-- Spam trap: humans never see or fill this. -->
+    <input type="checkbox" name="botcheck" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <div class="actions">
+      <button type="submit">[ SEND INQUIRY ]</button>
+      <span class="status dim" role="status"></span>
+    </div>
+  </form>
+</section>
+
+<style>
+  .blurb {
+    margin: 0.5em 0;
+  }
+  ol {
+    list-style: none;
+    padding: 0;
+    margin: 0.2em 0 0;
+  }
+  li {
+    padding-left: 1.6em;
+    text-indent: -1.6em;
+  }
+  .recent {
+    margin-top: 0.6em;
+  }
+  .inquiry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.5em;
+  }
+  .row > span {
+    color: var(--dim);
+    white-space: pre;
+  }
+  .stacked {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  input,
+  select,
+  textarea {
+    flex: 1;
+    min-width: 12em;
+    font: inherit;
+    color: var(--bright);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px dashed var(--dim);
+    padding: 0.1em 0.2em;
+    text-shadow: inherit;
+    border-radius: 0;
+  }
+  textarea {
+    border: 1px dashed var(--dim);
+    resize: vertical;
+    min-height: 5em;
+  }
+  select {
+    flex: 0 1 auto;
+    background: var(--bg);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--fg);
+    background: color-mix(in srgb, var(--fg) 8%, transparent);
+  }
+  ::placeholder {
+    color: var(--dim);
+    opacity: 0.7;
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3em 1em;
+    margin-top: 0.3em;
+  }
+  button {
+    border: 1px solid var(--fg);
+    background: transparent;
+    padding: 0.05em 0.6em;
+    cursor: pointer;
+  }
+  button:hover,
+  button:focus-visible {
+    background: var(--fg);
+    color: var(--bg);
+    text-shadow: none;
+    outline: none;
+  }
+  button:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+</style>

@@ -22,22 +22,39 @@ export interface Profile {
    * Leave empty until the file exists; the download button is hidden while empty.
    */
   resumePdf: string;
+  /** Freelance consulting offer. Set `open: false` to hide it everywhere. */
+  consulting: {
+    open: boolean;
+    blurb: string;
+    focus: string[];
+  };
 }
 
 export const profile: Profile = {
-  name: 'James Tippets', // TODO: confirm how you want your name shown
-  title: 'Your Professional Title', // TODO
-  location: 'City, State', // TODO
+  name: 'James Tippets',
+  title: 'Service Desk Analyst II',
+  location: 'Winchester, Virginia',
   tagline:
-    'TODO: A one-line summary of what you do and the kind of work you are looking for.',
+    'Healthcare IT support specialist working across Microsoft 365, endpoint security and networking, and building software with AI on the side.',
   about: [
-    'TODO: A short paragraph about your background and what you focus on.',
-    'TODO: A second paragraph about what you are working on now, or what you enjoy outside of work.',
+    "I'm a Service Desk Analyst II at Valley Health in Winchester, Virginia. Before that I resolved 2,500+ tickets for healthcare clients at Miles IT, administering Microsoft 365, Entra ID, Intune and FortiGate firewalls in HIPAA-regulated environments.",
+    "I care about fixing the root cause instead of applying a band-aid, and about explaining technical problems clearly. In my free time I'm the IT consultant for the Fort Mill History Museum, and I build things with Claude: a certification study app, a personal AI assistant, and a couple of games.",
+    "I'm open to IT consulting inquiries, with a focus on hardware and repair, Microsoft 365 management, and AI consulting.",
   ],
-  email: '', // TODO: add a public contact email if you want one shown
+  email: 'James.C.Tippets@gmail.com',
   links: [
     { label: 'GitHub', href: 'https://github.com/jamesctippets-ui' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/' }, // TODO: your profile URL
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/james-tippets-5075442bb/' },
   ],
   resumePdf: '',
+  consulting: {
+    open: true,
+    blurb:
+      'Available for freelance IT consulting for small businesses, nonprofits and individuals. Get in touch with a short description of what you need.',
+    focus: [
+      'Hardware & repair: diagnostics, upgrades, data recovery and device setup',
+      'Microsoft 365 management: Exchange, Teams, SharePoint, Intune and licensing',
+      'AI consulting: practical Claude/AI workflows, automation and assistants',
+    ],
+  },
 };

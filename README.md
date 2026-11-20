@@ -1,7 +1,7 @@
 # Personal site
 
-My personal website: projects I'm working on, skills, references, and my resume, presented as a
-retro desktop operating system with draggable windows, a taskbar and a Start menu.
+My personal website: projects I'm working on, skills, consulting, and my resume, presented as an
+old-school command-line OS. Type commands like `help`, `projects` or `resume`, or just click.
 Built with [Astro](https://astro.build) as a fully static site and deployed to GitHub Pages.
 
 ## Develop
@@ -21,10 +21,10 @@ All site content lives in `src/data/`. Edit those files; no page code changes ar
 
 | File | What it controls |
 | --- | --- |
-| `profile.ts` | Name, title, tagline, about text, contact links, resume PDF |
+| `profile.ts` | Name, title, tagline, about text, contact links, resume PDF, consulting offer |
 | `projects.ts` | Project cards |
 | `skills.ts` | Skill groups (home page and resume) |
-| `references.ts` | Testimonials (empty array removes the References window) |
+| `references.ts` | Testimonials (empty array removes the REFERENCES command) |
 | `resume.ts` | Resume summary, experience, education, certifications |
 
 To offer a downloadable resume, put the PDF in `public/` (e.g. `public/resume.pdf`) and set

@@ -1,0 +1,23 @@
+---
+import { references } from '@/data/references';
+---
+
+<ul>
+  {
+    references.map((ref) => (
+      <li class="frame">
+        <h2 class="frame-title">MESSAGE FROM {ref.name.toUpperCase()}</h2>
+        <blockquote>“{ref.quote}”</blockquote>
+        <p class="dim">
+          — {ref.url ? <a href={ref.url}>{ref.name}</a> : ref.name}, {ref.role}
+        </p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  blockquote {
+    margin: 0 0 0.4em;
+  }
+</style>

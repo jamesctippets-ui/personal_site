@@ -1,6 +1,6 @@
 ---
-// The resume itself. Rendered inside the Resume window on the desktop and on
-// the standalone /resume page, which is the printable version.
+// The paper-style resume on the standalone /resume page (the printable version).
+// The terminal's RESUME command uses screens/ResumeText.astro instead.
 import { profile } from '@/data/profile';
 import { resume } from '@/data/resume';
 import { skills } from '@/data/skills';
@@ -38,7 +38,7 @@ import { skills } from '@/data/skills';
               {role.title}, <span class="org">{role.organization}</span>
             </h3>
             <span class="dates">
-              {role.start} – {role.end}
+              {role.start ? `${role.start} – ${role.end}` : role.end}
             </span>
           </div>
           {role.location && <p class="meta">{role.location}</p>}
@@ -74,9 +74,10 @@ import { skills } from '@/data/skills';
           {resume.certifications.map((c) => (
             <li class="entry-head">
               <span>
-                {c.url ? <a href={c.url}>{c.name}</a> : c.name}, <span class="org">{c.issuer}</span>
+                {c.url ? <a href={c.url}>{c.name}</a> : c.name}
+                {c.issuer && <span class="org">, {c.issuer}</span>}
               </span>
-              <span class="dates">{c.year}</span>
+              {c.year && <span class="dates">{c.year}</span>}
             </li>
           ))}
         </ul>
@@ -84,22 +85,26 @@ import { skills } from '@/data/skills';
     )
   }
 
-  <section>
-    <h2>Education</h2>
-    {
-      resume.education.map((e) => (
-        <div class="entry">
-          <div class="entry-head">
-            <h3>
-              {e.credential}, <span class="org">{e.institution}</span>
-            </h3>
-            <span class="dates">{e.year}</span>
-          </div>
-          {e.details && <p class="meta">{e.details}</p>}
-        </div>
-      ))
-    }
-  </section>
+  {
+    resume.education.length > 0 && (
+      <section>
+        <h2>Education</h2>
+        {
+          resume.education.map((e) => (
+            <div class="entry">
+              <div class="entry-head">
+                <h3>
+                  {e.credential}, <span class="org">{e.institution}</span>
+                </h3>
+                <span class="dates">{e.year}</span>
+              </div>
+              {e.details && <p class="meta">{e.details}</p>}
+            </div>
+          ))
+        }
+      </section>
+    )
+  }
 </article>
 
 <style>
@@ -110,12 +115,22 @@ import { skills } from '@/data/skills';
     line-height: 1.5;
     color: #111;
   }
+  .resume a {
+    color: #1a4fa0;
+  }
+  .resume a:hover,
+  .resume a:focus-visible {
+    background: none;
+    color: #0b2a6a;
+    text-decoration: underline;
+  }
   header {
     border-bottom: 2px solid #111;
     padding-bottom: 0.75rem;
     margin-bottom: 1.1rem;
   }
   h1 {
+    font-weight: 700;
     font-size: 26px;
     letter-spacing: 0.02em;
   }
@@ -137,7 +152,8 @@ import { skills } from '@/data/skills';
     margin-top: 1.2rem;
   }
   h2 {
-    font-family: var(--font);
+    font-weight: 700;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -160,6 +176,7 @@ import { skills } from '@/data/skills';
   }
   h3 {
     font-size: 15px;
+    font-weight: 700;
   }
   .org {
     font-weight: 400;
@@ -173,6 +190,7 @@ import { skills } from '@/data/skills';
     margin: 0;
   }
   .entry ul {
+    list-style: disc;
     margin: 0.3rem 0 0;
     padding-left: 1.2rem;
   }
