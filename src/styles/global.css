@@ -1,29 +1,36 @@
-/* Design tokens. Dark mode follows the OS setting. */
+/*
+ * Retro desktop theme. Original styling in the spirit of late-90s desktop
+ * operating systems: beveled grey chrome, a teal desktop, navy title bars.
+ * Bevels are built from the four --3d-* tones; use the .raised / .sunken
+ * utilities (or the same box-shadows) rather than hand-rolling borders.
+ */
 :root {
-  --bg: #fbfbfa;
-  --surface: #ffffff;
-  --text: #1c1d1f;
-  --muted: #5d6168;
-  --border: #e3e4e6;
-  --accent: #1f5fbf;
-  --accent-soft: #e8effa;
-  --radius: 10px;
-  --max: 68rem;
-  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111214;
-    --surface: #18191c;
-    --text: #e8e9eb;
-    --muted: #9da1a8;
-    --border: #2b2d31;
-    --accent: #7aa7ec;
-    --accent-soft: #1b2638;
-  }
+  --desktop: #0f7b7b;
+  --face: #c3c3c3;
+  --face-light: #dfdfdf;
+  --3d-hi: #ffffff;
+  --3d-light: #dfdfdf;
+  --3d-shadow: #808080;
+  --3d-dark: #0a0a0a;
+  --text: #0a0a0a;
+  --muted: #4a4a4a;
+  --field: #ffffff;
+  --select: #0b2a8a;
+  --select-text: #ffffff;
+  --title-a: #0b2a8a;
+  --title-b: #2f7fcf;
+  --title-inactive-a: #7b7b7b;
+  --title-inactive-b: #b5b5b5;
+  --link: #0b2a8a;
+  --taskbar-h: 2.5rem;
+  --font: Tahoma, Verdana, 'Segoe UI', 'DejaVu Sans', system-ui, sans-serif;
+  --raised: inset -1px -1px var(--3d-dark), inset 1px 1px var(--3d-hi),
+    inset -2px -2px var(--3d-shadow), inset 2px 2px var(--3d-light);
+  --pressed: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-dark),
+    inset -2px -2px var(--3d-light), inset 2px 2px var(--3d-shadow);
+  --sunken: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow),
+    inset -2px -2px var(--3d-light), inset 2px 2px var(--3d-dark);
+  color-scheme: light;
 }
 
 *,
@@ -32,113 +39,106 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+html,
+body {
+  margin: 0;
+  height: 100%;
 }
 
 body {
-  margin: 0;
-  background: var(--bg);
+  background: var(--desktop);
   color: var(--text);
   font-family: var(--font);
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 a {
-  color: var(--accent);
-  text-underline-offset: 0.18em;
-}
-
-a:hover {
-  text-decoration-thickness: 2px;
+  color: var(--link);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+  outline: 1px dotted var(--text);
+  outline-offset: 2px;
 }
 
 h1,
 h2,
-h3 {
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+h3,
+h4 {
   margin: 0;
+  line-height: 1.25;
 }
 
-img {
-  max-width: 100%;
+p {
+  margin: 0 0 0.75em;
+}
+
+img,
+svg {
   display: block;
 }
 
-.container {
-  width: 100%;
-  max-width: var(--max);
-  margin-inline: auto;
-  padding-inline: 1rem;
+.raised {
+  background: var(--face);
+  box-shadow: var(--raised);
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding-inline: 1.5rem;
-  }
+.sunken {
+  background: var(--field);
+  box-shadow: var(--sunken);
 }
 
-.section {
-  padding-block: 4rem;
-  border-top: 1px solid var(--border);
-}
-
-.section-title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin-bottom: 1.5rem;
-}
-
+/* Push button */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.1rem;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: var(--bg);
-  font-weight: 600;
-  font-size: 0.9375rem;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 5.5rem;
+  min-height: 1.85rem;
+  padding: 0.2rem 0.9rem;
+  border: 0;
+  background: var(--face);
+  box-shadow: var(--raised);
+  color: var(--text);
+  font: inherit;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.btn:hover {
-  filter: brightness(1.08);
+.btn:active,
+.btn[aria-pressed='true'] {
+  box-shadow: var(--pressed);
+  padding: 0.25rem 0.85rem 0.15rem 0.95rem;
 }
 
-.btn-secondary {
-  background: transparent;
-  color: var(--accent);
+.btn:focus-visible {
+  outline-offset: -5px;
 }
 
-.tag {
+/* Group box */
+.groupbox {
+  border: 0;
+  margin: 0 0 1rem;
+  padding: 0.9rem 0.8rem 0.7rem;
+  box-shadow: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow),
+    inset -2px -2px var(--3d-shadow), inset 2px 2px var(--3d-hi);
+}
+
+.groupbox > legend {
+  padding: 0 0.3rem;
+  background: var(--face);
+  font-weight: 700;
+}
+
+/* Small label chip used for tags */
+.chip {
   display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 0.8125rem;
-  font-weight: 500;
+  padding: 0 0.4rem;
+  background: var(--face-light);
+  border: 1px solid var(--3d-shadow);
+  font-size: 12px;
 }
 
 .sr-only {
@@ -153,17 +153,7 @@ img {
   border: 0;
 }
 
-.skip-link {
-  position: absolute;
-  left: 1rem;
-  top: -3rem;
-  padding: 0.5rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  z-index: 100;
-}
-
-.skip-link:focus {
-  top: 1rem;
+/* Retro scrollbars where supported */
+* {
+  scrollbar-color: var(--3d-shadow) var(--face-light);
 }

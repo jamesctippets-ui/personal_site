@@ -1,6 +1,7 @@
 # Personal site
 
-My personal website: projects I'm working on, skills, references, and my resume.
+My personal website: projects I'm working on, skills, references, and my resume, presented as a
+retro desktop operating system with draggable windows, a taskbar and a Start menu.
 Built with [Astro](https://astro.build) as a fully static site and deployed to GitHub Pages.
 
 ## Develop
@@ -23,11 +24,11 @@ All site content lives in `src/data/`. Edit those files; no page code changes ar
 | `profile.ts` | Name, title, tagline, about text, contact links, resume PDF |
 | `projects.ts` | Project cards |
 | `skills.ts` | Skill groups (home page and resume) |
-| `references.ts` | Testimonials (empty array hides the section) |
+| `references.ts` | Testimonials (empty array removes the References window) |
 | `resume.ts` | Resume summary, experience, education, certifications |
 
 To offer a downloadable resume, put the PDF in `public/` (e.g. `public/resume.pdf`) and set
-`resumePdf: 'resume.pdf'` in `profile.ts`. The resume page also prints cleanly to PDF.
+`resumePdf: 'resume.pdf'` in `profile.ts`. The `/resume` page also prints cleanly to PDF.
 
 ## Deploying
 
