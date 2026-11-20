@@ -1,0 +1,159 @@
+/*
+ * Retro desktop theme. Original styling in the spirit of late-90s desktop
+ * operating systems: beveled grey chrome, a teal desktop, navy title bars.
+ * Bevels are built from the four --3d-* tones; use the .raised / .sunken
+ * utilities (or the same box-shadows) rather than hand-rolling borders.
+ */
+:root {
+  --desktop: #0f7b7b;
+  --face: #c3c3c3;
+  --face-light: #dfdfdf;
+  --3d-hi: #ffffff;
+  --3d-light: #dfdfdf;
+  --3d-shadow: #808080;
+  --3d-dark: #0a0a0a;
+  --text: #0a0a0a;
+  --muted: #4a4a4a;
+  --field: #ffffff;
+  --select: #0b2a8a;
+  --select-text: #ffffff;
+  --title-a: #0b2a8a;
+  --title-b: #2f7fcf;
+  --title-inactive-a: #7b7b7b;
+  --title-inactive-b: #b5b5b5;
+  --link: #0b2a8a;
+  --taskbar-h: 2.5rem;
+  --font: Tahoma, Verdana, 'Segoe UI', 'DejaVu Sans', system-ui, sans-serif;
+  --raised: inset -1px -1px var(--3d-dark), inset 1px 1px var(--3d-hi),
+    inset -2px -2px var(--3d-shadow), inset 2px 2px var(--3d-light);
+  --pressed: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-dark),
+    inset -2px -2px var(--3d-light), inset 2px 2px var(--3d-shadow);
+  --sunken: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow),
+    inset -2px -2px var(--3d-light), inset 2px 2px var(--3d-dark);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--desktop);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+a {
+  color: var(--link);
+}
+
+:focus-visible {
+  outline: 1px dotted var(--text);
+  outline-offset: 2px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+p {
+  margin: 0 0 0.75em;
+}
+
+img,
+svg {
+  display: block;
+}
+
+.raised {
+  background: var(--face);
+  box-shadow: var(--raised);
+}
+
+.sunken {
+  background: var(--field);
+  box-shadow: var(--sunken);
+}
+
+/* Push button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 5.5rem;
+  min-height: 1.85rem;
+  padding: 0.2rem 0.9rem;
+  border: 0;
+  background: var(--face);
+  box-shadow: var(--raised);
+  color: var(--text);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn:active,
+.btn[aria-pressed='true'] {
+  box-shadow: var(--pressed);
+  padding: 0.25rem 0.85rem 0.15rem 0.95rem;
+}
+
+.btn:focus-visible {
+  outline-offset: -5px;
+}
+
+/* Group box */
+.groupbox {
+  border: 0;
+  margin: 0 0 1rem;
+  padding: 0.9rem 0.8rem 0.7rem;
+  box-shadow: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow),
+    inset -2px -2px var(--3d-shadow), inset 2px 2px var(--3d-hi);
+}
+
+.groupbox > legend {
+  padding: 0 0.3rem;
+  background: var(--face);
+  font-weight: 700;
+}
+
+/* Small label chip used for tags */
+.chip {
+  display: inline-block;
+  padding: 0 0.4rem;
+  background: var(--face-light);
+  border: 1px solid var(--3d-shadow);
+  font-size: 12px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Retro scrollbars where supported */
+* {
+  scrollbar-color: var(--3d-shadow) var(--face-light);
+}

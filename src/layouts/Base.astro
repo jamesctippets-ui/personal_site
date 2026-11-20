@@ -1,0 +1,37 @@
+---
+import '@/styles/global.css';
+import { profile } from '@/data/profile';
+import { withBase } from '@/utils';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = profile.tagline } = Astro.props;
+const pageTitle = title ? `${title} | ${profile.name}` : `${profile.name} | ${profile.title}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#0f7b7b" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Flag JS before first paint so windows don't flash in their no-JS stacked layout. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

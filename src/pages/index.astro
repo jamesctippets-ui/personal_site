@@ -1,0 +1,426 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon, { type IconName } from '@/components/Icon.astro';
+import Window from '@/components/Window.astro';
+import About from '@/components/content/About.astro';
+import Projects from '@/components/content/Projects.astro';
+import Skills from '@/components/content/Skills.astro';
+import References from '@/components/content/References.astro';
+import ResumeDoc from '@/components/content/ResumeDoc.astro';
+import { profile } from '@/data/profile';
+import { projects } from '@/data/projects';
+import { references } from '@/data/references';
+import { withBase } from '@/utils';
+
+// Desktop shortcuts. `open` names a window id below; `href` is an external link.
+interface Shortcut {
+  label: string;
+  icon: IconName;
+  open?: string;
+  href?: string;
+}
+
+const github = profile.links.find((l) => l.label.toLowerCase() === 'github');
+
+const shortcuts: Shortcut[] = [
+  { label: 'About Me', icon: 'about', open: 'about' },
+  { label: 'Projects', icon: 'projects', open: 'projects' },
+  { label: 'Skills', icon: 'skills', open: 'skills' },
+  ...(references.length ? [{ label: 'References', icon: 'references', open: 'references' } as const] : []),
+  { label: 'Resume.doc', icon: 'resume', open: 'resume' },
+  ...(github ? [{ label: 'GitHub', icon: 'globe', href: github.href } as const] : []),
+];
+
+const osName = `${profile.name.split(' ')[0]}OS`;
+---
+
+<Base>
+  <div class="desktop" id="desktop">
+    <h1 class="sr-only">{profile.name}, {profile.title}</h1>
+
+    <nav class="icons" aria-label="Desktop shortcuts">
+      <ul>
+        {
+          shortcuts.map((s) => (
+            <li>
+              <a
+                class="desk-icon"
+                href={s.open ? `#${s.open}` : s.href}
+                data-open={s.open}
+                target={s.href ? '_blank' : undefined}
+                rel={s.href ? 'noopener' : undefined}
+              >
+                <Icon name={s.icon} size={32} />
+                <span>{s.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <Window id="about" title="About Me" icon="about" width={520}>
+      <About />
+    </Window>
+
+    <Window
+      id="projects"
+      title="Projects"
+      icon="projects"
+      width={620}
+      height={520}
+      status={`${projects.length} object(s)`}
+      surface="face"
+    >
+      <Projects />
+    </Window>
+
+    <Window id="skills" title="Skills" icon="skills" width={560} surface="face">
+      <Skills />
+    </Window>
+
+    {
+      references.length > 0 && (
+        <Window
+          id="references"
+          title="References"
+          icon="references"
+          width={520}
+          status={`${references.length} message(s)`}
+        >
+          <References />
+        </Window>
+      )
+    }
+
+    <Window id="resume" title="Resume.doc" icon="resume" width={720} height={600}>
+      <div slot="toolbar" class="toolbar">
+        <a class="btn" href={withBase('resume')}>Printable version</a>
+        {
+          profile.resumePdf && (
+            <a class="btn" href={withBase(profile.resumePdf)} download>
+              Download PDF
+            </a>
+          )
+        }
+      </div>
+      <ResumeDoc />
+    </Window>
+  </div>
+
+  <div id="start-menu" class="start-menu raised" hidden>
+    <div class="banner" aria-hidden="true"><span>{osName}</span></div>
+    <ul aria-label="Start menu">
+      {
+        shortcuts
+          .filter((s) => s.open)
+          .map((s) => (
+            <li>
+              <a href={`#${s.open}`} data-open={s.open}>
+                <Icon name={s.icon} size={24} />
+                <span>{s.label}</span>
+              </a>
+            </li>
+          ))
+      }
+      <li class="sep" role="separator"></li>
+      {
+        profile.email && (
+          <li>
+            <a href={`mailto:${profile.email}`}>
+              <Icon name="mail" size={24} />
+              <span>Send Email</span>
+            </a>
+          </li>
+        )
+      }
+      {
+        profile.links.map((link) => (
+          <li>
+            <a href={link.href} target="_blank" rel="me noopener">
+              <Icon name="globe" size={24} />
+              <span>{link.label}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li class="sep" role="separator"></li>
+      <li>
+        <button type="button" data-shutdown>
+          <Icon name="power" size={24} />
+          <span>Shut Down…</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <footer class="taskbar raised">
+    <button
+      type="button"
+      id="start-button"
+      class="btn start"
+      aria-expanded="false"
+      aria-controls="start-menu"
+    >
+      <Icon name="computer" size={18} />
+      <span>Start</span>
+    </button>
+    <div class="tasks" id="tasks" aria-label="Open windows"></div>
+    <div class="tray">
+      <time id="clock"></time>
+    </div>
+  </footer>
+
+  <div id="shutdown" class="shutdown" hidden>
+    <p>It's now safe to close this tab.</p>
+    <p class="small">Thanks for stopping by.</p>
+    <button type="button" class="btn" data-restart>Restart</button>
+  </div>
+</Base>
+
+<script>
+  import '@/scripts/desktop';
+</script>
+
+<style>
+  /* ---------- No-JS fallback: a normal scrolling page ---------- */
+  .desktop {
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  .taskbar,
+  .start-menu {
+    display: none;
+  }
+
+  /* ---------- Desktop mode (JS enabled) ---------- */
+  :global(html.js) body {
+    overflow: hidden;
+  }
+  :global(html.js) .desktop {
+    position: fixed;
+    inset: 0 0 var(--taskbar-h) 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .icons ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 5.75rem);
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+  :global(html.js) .icons ul {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-template-rows: repeat(auto-fill, 5.25rem);
+    height: calc(100vh - var(--taskbar-h));
+    height: calc(100dvh - var(--taskbar-h));
+    padding: 0.75rem 0.5rem;
+    gap: 0.75rem 0.5rem;
+  }
+  .desk-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    width: 5.75rem;
+    padding: 0.25rem 0.15rem;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    font-size: 13px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .desk-icon span {
+    padding: 0 0.2rem;
+    text-shadow: 1px 1px 0 #000;
+    line-height: 1.25;
+  }
+  .desk-icon:focus-visible {
+    outline: none;
+  }
+  .desk-icon:focus-visible span {
+    outline: 1px dotted #fff;
+  }
+  .desk-icon:global(.is-selected) span {
+    background: var(--select);
+    text-shadow: none;
+  }
+  .desk-icon:global(.is-selected) :global(svg) {
+    filter: sepia(1) hue-rotate(180deg) saturate(4) brightness(0.7);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 3px 2px 1px;
+  }
+
+  /* ---------- Taskbar ---------- */
+  :global(html.js) .taskbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: var(--taskbar-h);
+    padding: 4px 3px 3px;
+    box-shadow: inset 0 1px var(--3d-light), inset 0 2px var(--3d-hi);
+  }
+  .start {
+    min-width: 0;
+    height: 100%;
+    padding: 0 0.6rem 0 0.4rem;
+    font-weight: 700;
+    flex: none;
+  }
+  .start[aria-expanded='true'] {
+    box-shadow: var(--pressed);
+  }
+  .tasks {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+  .tasks :global(.task) {
+    justify-content: flex-start;
+    flex: 0 1 10rem;
+    min-width: 2.5rem;
+    height: 100%;
+    padding: 0 0.5rem;
+    overflow: hidden;
+  }
+  .tasks :global(.task[aria-pressed='true']) {
+    background: repeating-conic-gradient(var(--face-light) 0 25%, #fff 0 50%) 0 0 / 2px 2px;
+    font-weight: 700;
+  }
+  .tasks :global(.task span) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tasks :global(.task svg) {
+    flex: none;
+  }
+  .tray {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 0.75rem;
+    flex: none;
+    font-size: 13px;
+    box-shadow: inset -1px -1px var(--3d-hi), inset 1px 1px var(--3d-shadow);
+  }
+
+  /* ---------- Start menu ---------- */
+  :global(html.js) .start-menu:not([hidden]) {
+    position: fixed;
+    left: 3px;
+    bottom: calc(var(--taskbar-h) - 2px);
+    z-index: 10001;
+    display: flex;
+    padding: 3px;
+    min-width: 13.5rem;
+  }
+  .banner {
+    display: flex;
+    align-items: flex-end;
+    width: 1.75rem;
+    background: linear-gradient(0deg, var(--title-a), var(--title-b));
+    color: #fff;
+  }
+  .banner span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 0.5rem 0;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .start-menu ul {
+    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: 2px 0;
+  }
+  .start-menu a,
+  .start-menu button {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.3rem 1rem 0.3rem 0.4rem;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .start-menu a:hover,
+  .start-menu a:focus-visible,
+  .start-menu button:hover,
+  .start-menu button:focus-visible {
+    background: var(--select);
+    color: var(--select-text);
+    outline: none;
+  }
+  .sep {
+    height: 2px;
+    margin: 3px 2px;
+    box-shadow: inset 0 1px var(--3d-shadow), inset 0 -1px var(--3d-hi);
+  }
+
+  /* ---------- Shut down screen ---------- */
+  .shutdown:not([hidden]) {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 1rem;
+    background: #000;
+    color: #f0a030;
+    text-align: center;
+    font-size: clamp(18px, 4vw, 30px);
+  }
+  .shutdown .small {
+    font-size: 15px;
+    color: #c8c8c8;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ---------- Phones ---------- */
+  @media (max-width: 720px) {
+    :global(html.js) .icons ul {
+      grid-auto-flow: row;
+      grid-template-rows: none;
+      grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+      justify-items: center;
+      height: auto;
+      padding: 1rem 0.5rem;
+    }
+    .tasks :global(.task span) {
+      display: none;
+    }
+    .tasks :global(.task) {
+      flex: 0 0 auto;
+      justify-content: center;
+    }
+  }
+</style>

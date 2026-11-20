@@ -1,0 +1,103 @@
+---
+// Standalone, printable resume. On screen it looks like a document open in a
+// retro word-processor window; in print it is plain black-on-white paper.
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import ResumeDoc from '@/components/content/ResumeDoc.astro';
+import { profile } from '@/data/profile';
+import { withBase } from '@/utils';
+---
+
+<Base title="Resume" description={`Resume of ${profile.name}, ${profile.title}.`}>
+  <div class="page">
+    <div class="frame raised">
+      <header class="titlebar">
+        <Icon name="resume" size={16} />
+        <h1>Resume.doc</h1>
+      </header>
+      <div class="toolbar">
+        <a class="btn" href={withBase('#resume')}>← Back to desktop</a>
+        <button class="btn" type="button" id="print">Print</button>
+        {
+          profile.resumePdf && (
+            <a class="btn" href={withBase(profile.resumePdf)} download>
+              Download PDF
+            </a>
+          )
+        }
+      </div>
+      <div class="canvas sunken">
+        <div class="paper">
+          <ResumeDoc />
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  document.getElementById('print')?.addEventListener('click', () => window.print());
+</script>
+
+<style>
+  :global(html.js) body {
+    overflow: auto;
+  }
+  .page {
+    min-height: 100vh;
+    padding: clamp(0px, 3vw, 2rem);
+  }
+  .frame {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 3px;
+  }
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 3px 4px;
+    background: linear-gradient(90deg, var(--title-a), var(--title-b));
+    color: #fff;
+  }
+  h1 {
+    font-size: 13px;
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 4px 2px;
+  }
+  .canvas {
+    background: var(--3d-shadow);
+    padding: clamp(0.5rem, 3vw, 2rem);
+  }
+  .paper {
+    max-width: 50rem;
+    margin: 0 auto;
+    background: #fff;
+    padding: clamp(1.25rem, 5vw, 3.25rem);
+    box-shadow: 3px 3px 0 #000;
+  }
+
+  @media print {
+    :global(body) {
+      background: #fff;
+    }
+    .page,
+    .frame,
+    .canvas,
+    .paper {
+      padding: 0;
+      margin: 0;
+      max-width: none;
+      background: none;
+      box-shadow: none;
+    }
+    .titlebar,
+    .toolbar {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,217 @@
+---
+// The resume itself. Rendered inside the Resume window on the desktop and on
+// the standalone /resume page, which is the printable version.
+import { profile } from '@/data/profile';
+import { resume } from '@/data/resume';
+import { skills } from '@/data/skills';
+---
+
+<article class="resume">
+  <header>
+    <h1>{profile.name}</h1>
+    <p class="title">{profile.title}</p>
+    <ul class="contact">
+      <li>{profile.location}</li>
+      {profile.email && <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>}
+      {
+        profile.links.map((link) => (
+          <li>
+            <a href={link.href}>{link.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </header>
+
+  <section>
+    <h2>Summary</h2>
+    <p>{resume.summary}</p>
+  </section>
+
+  <section>
+    <h2>Experience</h2>
+    {
+      resume.experience.map((role) => (
+        <div class="entry">
+          <div class="entry-head">
+            <h3>
+              {role.title}, <span class="org">{role.organization}</span>
+            </h3>
+            <span class="dates">
+              {role.start} – {role.end}
+            </span>
+          </div>
+          {role.location && <p class="meta">{role.location}</p>}
+          <ul>
+            {role.highlights.map((h) => (
+              <li>{h}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <dl class="skills">
+      {
+        skills.map((group) => (
+          <>
+            <dt>{group.category}</dt>
+            <dd>{group.items.join(', ')}</dd>
+          </>
+        ))
+      }
+    </dl>
+  </section>
+
+  {
+    resume.certifications.length > 0 && (
+      <section>
+        <h2>Certifications</h2>
+        <ul class="plain">
+          {resume.certifications.map((c) => (
+            <li class="entry-head">
+              <span>
+                {c.url ? <a href={c.url}>{c.name}</a> : c.name}, <span class="org">{c.issuer}</span>
+              </span>
+              <span class="dates">{c.year}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section>
+    <h2>Education</h2>
+    {
+      resume.education.map((e) => (
+        <div class="entry">
+          <div class="entry-head">
+            <h3>
+              {e.credential}, <span class="org">{e.institution}</span>
+            </h3>
+            <span class="dates">{e.year}</span>
+          </div>
+          {e.details && <p class="meta">{e.details}</p>}
+        </div>
+      ))
+    }
+  </section>
+</article>
+
+<style>
+  /* A plain "paper" document: a serif face and black on white so it reads like a real resume. */
+  .resume {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #111;
+  }
+  header {
+    border-bottom: 2px solid #111;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.1rem;
+  }
+  h1 {
+    font-size: 26px;
+    letter-spacing: 0.02em;
+  }
+  .title {
+    margin: 0.1rem 0 0.4rem;
+    font-size: 16px;
+    font-style: italic;
+  }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 1.1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13.5px;
+  }
+  section + section {
+    margin-top: 1.2rem;
+  }
+  h2 {
+    font-family: var(--font);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border-bottom: 1px solid #999;
+    padding-bottom: 0.15rem;
+    margin-bottom: 0.6rem;
+  }
+  section > p {
+    margin: 0;
+  }
+  .entry + .entry {
+    margin-top: 0.9rem;
+  }
+  .entry-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0 1rem;
+  }
+  h3 {
+    font-size: 15px;
+  }
+  .org {
+    font-weight: 400;
+  }
+  .dates,
+  .meta {
+    color: #444;
+    font-size: 13.5px;
+  }
+  .meta {
+    margin: 0;
+  }
+  .entry ul {
+    margin: 0.3rem 0 0;
+    padding-left: 1.2rem;
+  }
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .skills {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+    margin: 0;
+  }
+  .skills dt {
+    font-weight: 700;
+  }
+  .skills dd {
+    margin: 0;
+  }
+  @media (max-width: 540px) {
+    .skills {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .skills dd {
+      margin-bottom: 0.4rem;
+    }
+  }
+  @media print {
+    .resume {
+      font-size: 10.5pt;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .entry {
+      break-inside: avoid;
+    }
+  }
+</style>
