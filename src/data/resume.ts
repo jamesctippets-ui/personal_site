@@ -5,8 +5,8 @@ export interface Role {
   title: string;
   organization: string;
   location?: string;
-  /** Free text, e.g. "Jan 2024". */
-  start: string;
+  /** Free text, e.g. "Jan 2024". Omit for an ongoing side role. */
+  start?: string;
   /** Free text; use "Present" for a current role. */
   end: string;
   highlights: string[];
@@ -46,6 +46,14 @@ export const resume: Resume = {
       highlights: [
         'Triage incoming tickets and calls for the hospital\'s Information Services department, resolving issues at first contact where possible.',
         'Route escalations to the right IS teams with clear documentation so clinical and business staff get back to work quickly.',
+      ],
+    },
+    {
+      title: 'IT Consultant (part-time)',
+      organization: 'Fort Mill History Museum',
+      end: 'Present',
+      highlights: [
+        "Serve as the museum's IT consultant in my free time, supporting its computers, accounts and day-to-day technology needs.",
       ],
     },
     {
@@ -105,6 +113,6 @@ export const resume: Resume = {
   ],
   certifications: [
     { name: 'CompTIA A+' },
-    { name: 'CompTIA Network+' },
+    { name: 'Microsoft Azure Fundamentals (AZ-900)' },
   ],
 };

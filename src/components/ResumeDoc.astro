@@ -38,7 +38,7 @@ import { skills } from '@/data/skills';
               {role.title}, <span class="org">{role.organization}</span>
             </h3>
             <span class="dates">
-              {role.start} – {role.end}
+              {role.start ? `${role.start} – ${role.end}` : role.end}
             </span>
           </div>
           {role.location && <p class="meta">{role.location}</p>}
