@@ -6,10 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Least privilege: the build (which also runs on pull requests) can only read
+# the repo. Only the deploy job gets permission to publish to Pages.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -44,6 +44,9 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

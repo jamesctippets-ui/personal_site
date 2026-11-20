@@ -3,6 +3,15 @@
 import { profile } from '@/data/profile';
 import { fillTemplate, inquiry } from '@/data/inquiry';
 
+// Limits that match the maxlength attributes on the form, re-applied here in
+// case someone edits the page. Not a security boundary (anyone can POST to
+// Web3Forms directly), just keeps honest submissions sane.
+const LIMITS: Record<string, number> = { name: 100, email: 200, organization: 150, service: 100, timeline: 100, message: 5000 };
+// One send per 30 seconds per page, so a double-click or a bored visitor
+// can't flood the inbox from the form.
+const COOLDOWN_MS = 30_000;
+let lastSent = 0;
+
 document.addEventListener('submit', async (e) => {
   const form = (e.target as HTMLElement).closest<HTMLFormElement>('form[data-inquiry]');
   if (!form) return;
@@ -12,7 +21,7 @@ document.addEventListener('submit', async (e) => {
   if (data.get('botcheck')) return; // spam trap ticked: drop silently
   const fields: Record<string, string> = {};
   for (const key of ['name', 'email', 'organization', 'service', 'timeline', 'message']) {
-    fields[key] = String(data.get(key) ?? '');
+    fields[key] = String(data.get(key) ?? '').slice(0, LIMITS[key]);
   }
   const subject = fillTemplate(inquiry.subjectTemplate, fields);
   const body = fillTemplate(inquiry.bodyTemplate, fields);
@@ -27,6 +36,11 @@ document.addEventListener('submit', async (e) => {
     const href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     say('Opening your email app with the inquiry filled in...');
     window.location.href = href;
+    return;
+  }
+
+  if (Date.now() - lastSent < COOLDOWN_MS) {
+    say('Thanks, your message was just sent. Please wait a moment before sending another.');
     return;
   }
 
@@ -48,6 +62,7 @@ document.addEventListener('submit', async (e) => {
     });
     const json = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
     if (res.ok && json.success) {
+      lastSent = Date.now();
       form.reset();
       say('Sent. Thanks, I will get back to you soon.');
     } else {

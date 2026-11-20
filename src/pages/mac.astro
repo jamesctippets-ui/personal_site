@@ -12,16 +12,6 @@ import { sections } from '@/components/plain/sections';
 import { profile } from '@/data/profile';
 import { withBase } from '@/utils';
 
-const tint: Record<string, string> = {
-  about: 'linear-gradient(160deg,#7cc4ff,#2f7ae5)',
-  experience: 'linear-gradient(160deg,#ffd27a,#e8892b)',
-  projects: 'linear-gradient(160deg,#9fe6ff,#3fa7d6)',
-  skills: 'linear-gradient(160deg,#9ff0b8,#2fa865)',
-  lab: 'linear-gradient(160deg,#c3cad6,#5d6878)',
-  museum: 'linear-gradient(160deg,#f3e6c8,#b69a62)',
-  consulting: 'linear-gradient(160deg,#ffb3c7,#e0507a)',
-  contact: 'linear-gradient(160deg,#ffffff,#c9d3e0)',
-};
 ---
 
 <Plain title="JamesOS Orchard" themeColor="#e9e4f2" bodyClass="orchard">
@@ -79,7 +69,7 @@ const tint: Record<string, string> = {
         sections.map((s) => (
           <li>
             <a href={`#${s.id}`} data-open={s.id} data-label={s.label} aria-label={s.label}>
-              <span class="tile" style={`background:${tint[s.id] ?? tint.contact}`}>
+              <span class={`tile tile-${s.id}`}>
                 <Glyph name={s.glyph} size={30} />
               </span>
             </a>
@@ -89,12 +79,12 @@ const tint: Record<string, string> = {
       <li class="dock-sep" role="separator"></li>
       <li>
         <a href={withBase('resume/')} data-label="Printable resume" aria-label="Printable resume">
-          <span class="tile" style="background:linear-gradient(160deg,#fff,#dfe5ee)"><Glyph name="resume" size={30} /></span>
+          <span class="tile tile-resume"><Glyph name="resume" size={30} /></span>
         </a>
       </li>
       <li>
         <a href={withBase('')} data-label="Terminal" aria-label="Back to the terminal">
-          <span class="tile" style="background:#111"><Glyph name="terminal" size={30} /></span>
+          <span class="tile tile-terminal"><Glyph name="terminal" size={30} /></span>
         </a>
       </li>
     </ul>
@@ -591,6 +581,17 @@ const tint: Record<string, string> = {
   }
 
   /* ---------- Dock ---------- */
+  /* Tile colors are classes, not style attributes, so the CSP needs no 'unsafe-inline'. */
+  .orchard .tile-about { background: linear-gradient(160deg, #7cc4ff, #2f7ae5); }
+  .orchard .tile-experience { background: linear-gradient(160deg, #ffd27a, #e8892b); }
+  .orchard .tile-projects { background: linear-gradient(160deg, #9fe6ff, #3fa7d6); }
+  .orchard .tile-skills { background: linear-gradient(160deg, #9ff0b8, #2fa865); }
+  .orchard .tile-lab { background: linear-gradient(160deg, #c3cad6, #5d6878); }
+  .orchard .tile-museum { background: linear-gradient(160deg, #f3e6c8, #b69a62); }
+  .orchard .tile-consulting { background: linear-gradient(160deg, #ffb3c7, #e0507a); }
+  .orchard .tile-contact,
+  .orchard .tile-resume { background: linear-gradient(160deg, #ffffff, #c9d3e0); }
+  .orchard .tile-terminal { background: #111; }
   html.js .orchard .dock {
     display: block;
     position: fixed;

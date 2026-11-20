@@ -219,17 +219,17 @@ const statusLabel = { active: 'In progress', complete: 'Complete', paused: 'Paus
         <div class="pc-row">
           <label class="pc-field">
             <span>Name</span>
-            <input name="name" required autocomplete="name" />
+            <input name="name" required maxlength="100" autocomplete="name" />
           </label>
           <label class="pc-field">
             <span>Email</span>
-            <input name="email" type="email" required autocomplete="email" />
+            <input name="email" type="email" required maxlength="200" autocomplete="email" />
           </label>
         </div>
         <div class="pc-row">
           <label class="pc-field">
             <span>Organization (optional)</span>
-            <input name="organization" autocomplete="organization" />
+            <input name="organization" maxlength="150" autocomplete="organization" />
           </label>
           <label class="pc-field">
             <span>Service</span>
@@ -242,11 +242,11 @@ const statusLabel = { active: 'In progress', complete: 'Complete', paused: 'Paus
         </div>
         <label class="pc-field">
           <span>Timeline</span>
-          <input name="timeline" placeholder="e.g. this week, next month" />
+          <input name="timeline" maxlength="100" placeholder="e.g. this week, next month" />
         </label>
         <label class="pc-field">
           <span>Message</span>
-          <textarea name="message" rows="5" required placeholder="What do you need help with?" />
+          <textarea name="message" rows="5" required maxlength="5000" placeholder="What do you need help with?" />
         </label>
         <input type="checkbox" name="botcheck" class="pc-trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div class="pc-actions">
